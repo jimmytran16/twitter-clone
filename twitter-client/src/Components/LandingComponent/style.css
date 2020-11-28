@@ -1,0 +1,19 @@
+.left-column-content {
+    margin: 0px 20%;
+    padding-top: 30vh;
+}
+.container-icon-left p , .container-icon-left i {
+    display: inline;
+    padding:0px 20px;
+    color:white;
+}
+
+.container-icon-left p {
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.container-icon-left { 
+    padding: 20px 5px;
+    text-align: left;
+}

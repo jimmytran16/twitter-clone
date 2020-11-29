@@ -11,7 +11,7 @@ function LandingComponent() {
     return (
         <>
             <div className="landing-main-wrapper">
-                <Row>
+                <Row style={rowStyle}>
                     <Col md={6} style={{padding:'unset'}}>
                         <div style={leftCol} className="left-column">
                             <div className="left-column-content">
@@ -53,6 +53,10 @@ const rightCol = {
     backgroundColor: '#292f33',
     width:'100%',
     height:'100vh'
+}
+
+const rowStyle = {
+    margin:'unset',
 }
 
 export default LandingComponent;

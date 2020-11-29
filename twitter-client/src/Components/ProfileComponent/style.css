@@ -1,0 +1,32 @@
+.user-profile-avatar {
+    float: left;
+    width: 50px;
+    border-radius: 50px;
+    border: 3px navy solid;
+}
+
+.user-username, .follow-details-container{
+    text-align: left;
+}
+
+.edit-profile-btn {
+    background-color:#08a0e9!important;
+    font-weight: bolder!important;
+    border-radius: 45px!important;
+    border: 1px #08a0e9 solid!important;
+    float: right;
+}
+
+.edit-profile-btn:hover {
+    background-color: #0f9adc!important;
+    border-color:#0f9adc!important;
+}
+
+.follow-details-container p{
+    display: inline;
+    padding-right: 10px;
+}
+
+.navigation-container a:hover{
+    background-color: #cee5ff;
+}

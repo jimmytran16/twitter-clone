@@ -5,7 +5,7 @@ import { Form, Button } from 'react-bootstrap'
 
 function LoginForm() {
     return (
-        <Form style={formStyle} inline>
+        <Form className="login-form" inline>
             <Form.Control
                 className="mb-2 mr-sm-2"
                 id="inlineFormInputName2"
@@ -33,10 +33,5 @@ const inputStyle = {
     color:'white'
 }
 
-const formStyle = {
-    padding:'10px',
-    display: 'flex',
-    justifyContent:'space-evenly'
-}
 
 export default LoginForm;

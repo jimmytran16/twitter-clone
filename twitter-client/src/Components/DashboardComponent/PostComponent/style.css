@@ -1,0 +1,28 @@
+.user-profile-tweet-image { 
+    border-radius: 50px;
+    width: 100px;
+}
+
+.blockquote {
+    text-align: left;
+}
+
+.blockquote-footer::before {
+    content: unset!important;
+}
+
+.blockquote .user-name-container p, .blockquote p {
+    font-size: 14px;
+}
+
+.blockquote .user-name-container p{
+    font-weight: bolder;
+}
+
+.blockquote p, .blockquote span {
+    display: inline;
+}
+
+.blockquote span {
+    font-size: 12px;
+}

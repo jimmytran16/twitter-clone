@@ -1,0 +1,27 @@
+.post-icons-container {
+    display:flex;
+    justify-content: space-between;
+    margin-right: 60px;
+    margin-top: 10px;
+}
+
+/* .post-icons-container .fComment:hover{
+    background-color:#08a0e9!important;
+    border-radius: 25px;
+} */
+
+.tweet-btn-container {
+    float: right;
+}
+
+.tweet-btn-container button {
+    background-color:#08a0e9!important;
+    font-weight: bolder;
+    border-radius: 45px;
+    border: 1px #08a0e9 solid;
+}
+
+.tweet-btn-container button:hover {
+    background-color: #0f9adc!important;
+    border-color:#0f9adc!important;
+}

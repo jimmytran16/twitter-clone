@@ -1,0 +1,35 @@
+.modal-main-container {
+    border-radius: 25px;
+}
+.character-count-div {
+    text-align: right;
+}
+
+.twitter-icon-container {
+    padding: 10px 5px;
+}
+
+.twitter-icon {
+    margin-left: 46%;
+}
+
+.next-btn {
+    border-radius: 45px!important;
+    border:unset!important;
+    font-weight: bolder!important;
+    background-color:#08a0e9!important;
+    font-size: 14px!important;
+    width: 150px;
+}
+
+.sign-up-btn-container {
+    text-align: center;
+}
+
+.modal-content {
+    border-radius: 15px!important;
+}
+
+.modal-body {
+    height: 40vh;
+}

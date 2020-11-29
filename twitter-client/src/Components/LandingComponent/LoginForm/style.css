@@ -10,3 +10,15 @@
     background-color: #d0e9f5d3!important;
 }
 
+.login-form {
+    padding: 10px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+@media screen and (max-width:576px) {
+    .login-form {
+        padding: 20px;
+    }
+}
+

@@ -6,7 +6,7 @@ import avatarImage from '../../../avatar.png'
 import { Card, Row, Col } from 'react-bootstrap'
 
 
-function PostComponent() {
+function PostComponent(props) {
     return (
         <Card style={{ borderRadius: 'unset' }}>
             <Card.Body>
@@ -18,11 +18,10 @@ function PostComponent() {
                     </Col>
                     <Col xs={10} sm={10} md={10}>
                         <blockquote className="blockquote mb-0">
-                            <div className="user-name-container"> <p>Jimmy Tran</p> <span>@jjimmytrann</span> </div>
+                            <div className="user-name-container"> <p>Jimmy Tran</p> <span>@jjimmytrann • {props.date} </span> </div>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere
-                                erat a ante.
-                        </p>
+                                {props.tweet}
+                            </p>
                             <footer className="blockquote-footer">
                                 <div className="post-icons-container">
                                     <FontAwesomeIcon className="fComment" icon={faComment} />

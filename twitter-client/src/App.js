@@ -1,4 +1,3 @@
-import './App.css';
 import LandingComponent from './Components/LandingComponent/LandingComponent'
 import Dashboard from './Components/DashboardComponent/DashboardComponent'
 import ProfileComponent from './Components/ProfileComponent/ProfileComponent'
@@ -13,22 +12,22 @@ import {
 
 function App() {
   return (
-    <div className="App">
+    <>
       <Router>
         <Nav variant="tabs" defaultActiveKey="/home">
           <Nav.Item>
-            <Nav.Link >
-              <Link to="/"> Home </Link>
+            <Nav.Link as={Link} to="/">
+              Home
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link eventKey="link-1">
-              <Link to="/dashboard">Dashboard</Link>
+            <Nav.Link as={Link} to="/dashboard" >
+              Dashboard
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link eventKey="link-1">
-              <Link to="/profile"> Profile </Link>
+            <Nav.Link as={Link} to="/profile" >
+              Profile
             </Nav.Link>
           </Nav.Item>
         </Nav>
@@ -38,9 +37,7 @@ function App() {
           <Route path="/" component={LandingComponent} />
         </Switch>
       </Router>
-
-
-    </div>
+    </>
   );
 }
 

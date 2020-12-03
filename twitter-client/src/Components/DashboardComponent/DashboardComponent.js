@@ -31,7 +31,7 @@ function DashboardComponent() {
         axios({
             method: 'GET',
             withCredentials: true,
-            url: 'http://localhost:3001/home'
+            url: 'https://twitter-cl0ne-api.herokuapp.com/home'
         })
         .then(response => {
             if (response.data.success) {
@@ -45,7 +45,7 @@ function DashboardComponent() {
     },[refresh])
 
     const handleTweetSubmission = () => {
-        axios.post('http://localhost:3001/home/tweet/post',{
+        axios.post('https://twitter-cl0ne-api.herokuapp.com/home/tweet/post',{
             userid:userData._id,
             username: userData.phone,
             name: userData.name,
@@ -62,7 +62,7 @@ function DashboardComponent() {
         axios({
             method: 'POST',
             withCredentials: true,
-            url: 'http://localhost:3001/user/logout'
+            url: 'https://twitter-cl0ne-api.herokuapp.com/user/logout'
         })
         .then(response => {
             console.log(response.data);

@@ -34,7 +34,7 @@ function RegisterForm(props) {
 
     const handleRegistration  = (e) => {
         console.log('registration handling')
-        axios.post('http://localhost:3001/user/signup',{
+        axios.post('https://twitter-cl0ne-api.herokuapp.com/user/signup',{
             name:name,
             username:username,
             password:password,

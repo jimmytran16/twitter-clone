@@ -25,7 +25,7 @@ function LoginForm() {
                     password: password
                 },
                 withCredentials: true,
-                url: 'http://localhost:3001/auth/signin'
+                url: 'https://twitter-cl0ne-api.herokuapp.com/auth/signin'
             })
                 .then(response => {
                     console.log(response.data)
@@ -46,7 +46,7 @@ function LoginForm() {
         axios({
             method: 'GET',
             withCredentials: true,
-            url: 'http://localhost:3001/user/userdata'
+            url: 'https://twitter-cl0ne-api.herokuapp.com/user/userdata'
         })
         .then(response => console.log(response.data))
         .catch(err => console.error(err));

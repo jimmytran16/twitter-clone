@@ -41,7 +41,7 @@ router.post('/tweet/post', (req,res) => {
     
     post = new Post(req.body)
     // set the date for the post before saving it
-    post['date'] = new Date().toLocaleString('en-US', { timeZone: 'EST' });
+    post['date'] = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
     post.save((err,data) => {
         if (err) return res.send(err)
         else return res.send(data)

@@ -11,12 +11,15 @@ const MainRouter = require('./routes/Main/MainRouter')
 const UserActionRouter = require('./routes/UserAction/UserActionRouter')
 const UserAuthLogin = require('./routes/Auth/LoginRouter')
 const morgan = require('morgan')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
 // middlewares
 app.use(express.json())
 app.use(express.urlencoded())
 app.use(cors({
-  origin:'http://localhost:3000',
+  origin:process.env.ORIGIN_URL,
   credentials:true
 }))
 app.use(morgan('dev'))

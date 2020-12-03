@@ -53,7 +53,7 @@ function ProfileComponent() {
         setUserData(USER_DATA);
 
         // call api to get all of the posts of that user
-        Axios.get(`http://localhost:3001/home/profile?userid=${USER_DATA._id}`)
+        Axios.get(`https://twitter-cl0ne-api.herokuapp.com/home/profile?userid=${USER_DATA._id}`)
             .then(response => setUsersPost(response.data.data.reverse()))
             .catch(err => console.error(err));
 

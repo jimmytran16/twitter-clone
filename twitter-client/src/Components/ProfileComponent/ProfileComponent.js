@@ -1,9 +1,11 @@
-import React ,{ useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './style.css'
 import PostComponent from '../DashboardComponent/PostComponent/PostComponent'
 import { Container, Nav, Card, Button, Row, Col } from 'react-bootstrap'
 import avatarImg from '../../avatar.png'
 import { faBreadSlice } from '@fortawesome/free-solid-svg-icons'
+import Axios from 'axios'
+import { useHistory } from 'react-router-dom'
 
 
 const cardBodyStyleHeader = {
@@ -11,20 +13,20 @@ const cardBodyStyleHeader = {
 }
 
 const navStyling = {
-    marginTop:'20px',
+    marginTop: '20px',
 }
 
 const navLinkDefaultStyling = {
-    border:'unset'
+    border: 'unset'
 }
 
 const navLinkOnClickStyling = {
-    border:'unset!important',
+    border: 'unset!important',
     borderStyle: 'solid',
-    borderRight:'unset',
-    borderLeft:'unset',
-    borderTop:'unset',
-    borderColor:'#08a0e9!important'
+    borderRight: 'unset',
+    borderLeft: 'unset',
+    borderTop: 'unset',
+    borderColor: '#08a0e9!important'
 }
 
 function ProfileComponent() {
@@ -32,16 +34,36 @@ function ProfileComponent() {
     const [repliesBtnStyling, setRepliesBtnStyling] = useState(navLinkDefaultStyling)
     const [mediaBtnStyling, setMediaBtnStyling] = useState(navLinkDefaultStyling)
     const [likesBtnStyling, setLikesBtnStyling] = useState(navLinkDefaultStyling)
+    const [userData, setUserData] = useState({})
+    const [userPost, setUsersPost] = useState([])
+
+    const history = useHistory()
+
+    Axios.defaults.withCredentials = true;
 
     useEffect(() => {
+        // validate if the user is currently in here
+        if (!localStorage['user']) {
+            history.push('/')
+            return;
+        }
         console.log('set styling!!!!')
         setTweetsBtnStyling(navLinkDefaultStyling);
+        let USER_DATA = JSON.parse(localStorage['user']);
+        setUserData(USER_DATA);
+
+        // call api to get all of the posts of that user
+        Axios.get(`http://localhost:3001/home/profile?userid=${USER_DATA._id}`)
+            .then(response => setUsersPost(response.data.data.reverse()))
+            .catch(err => console.error(err));
+
     }, [])
 
+    // function to handle the clicks of the menus
     function handleLinkClicks(event) {
-        let navClicked =  event.target.innerText
+        let navClicked = event.target.innerText
         console.log(navClicked)
-        switch(navClicked) {
+        switch (navClicked) {
             case 'Tweets':
                 setTweetsBtnStyling(navLinkOnClickStyling);
                 setRepliesBtnStyling(navLinkDefaultStyling);
@@ -72,6 +94,11 @@ function ProfileComponent() {
         }
     }
 
+    const noTweetYetContent = (<div className="no-tweet-yet-container">
+        <h5>You haven't tweeted yet</h5>
+        <p>When you post a tweet, it'll show up here.</p>
+    </div>)
+
     return (
         <Container>
             <Card className="text-center">
@@ -88,7 +115,7 @@ function ProfileComponent() {
                                     </div>
                                 </Col>
                                 <Col md={12}>
-                                    <p className="user-username">@jjimmytran</p>
+                                    <p className="user-username">@{userData.username}</p>
                                     <div className="follow-details-container">
                                         <p><strong>440</strong> Following</p>
                                         <p><strong>200</strong> Follwers</p>
@@ -116,9 +143,20 @@ function ProfileComponent() {
                     </Nav>
                 </Card.Body>
             </Card>
-            <PostComponent />
+            {
+                userPost.length === 0
+                    ? (
+                        noTweetYetContent
+                    )
+                    : userPost.map((post, index) => {
+                        return (
+                            <PostComponent key={index} tweet={post.tweet} date={post.date} name={post.name} username={post.username} />
+                        )
+                    })
+            }
         </Container>
     )
 }
+
 
 export default ProfileComponent;

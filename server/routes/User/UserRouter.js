@@ -14,6 +14,7 @@ router.post('/signup', async (req,res) => {
         phone: req.body.phone,
         password: hashed_password,
         birth: req.body.birthday,
+        username:req.body.username
     })
     // save onto the database
     user.save((err,data) => {

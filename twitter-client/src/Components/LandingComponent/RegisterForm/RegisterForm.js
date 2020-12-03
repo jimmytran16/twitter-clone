@@ -21,6 +21,7 @@ const days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
 function RegisterForm(props) {
     const [show, setShow] = useState(props.show);
     const [name, setName] = useState("");
+    const [username,setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [month,setMonth] = useState(months[0]);
     const [day,setDay] = useState(days[0]);
@@ -35,6 +36,7 @@ function RegisterForm(props) {
         console.log('registration handling')
         axios.post('http://localhost:3001/user/signup',{
             name:name,
+            username:username,
             password:password,
             birthday:month + '-' + day + '-' + year,
             phone:phone
@@ -52,10 +54,13 @@ function RegisterForm(props) {
                 <Modal.Title>Create your account</Modal.Title>
             </Modal.Header>
             <Modal.Body className="modal-body">
-                <Form>
+                <Form> 
                     <Form.Group controlId="formGroupEmail">
                         <Form.Control style={inputStyle} type="email" placeholder="Name" onChange={(e) => setName(e.target.value)} />
                         <div className="character-count-div">{name.length}/50</div>
+                    </Form.Group>
+                    <Form.Group controlId="formGroupPassword">
+                        <Form.Control style={inputStyle} type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
                     </Form.Group>
                     <Form.Group controlId="formGroupPassword">
                         <Form.Control style={inputStyle} type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />

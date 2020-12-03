@@ -20,11 +20,28 @@ router.get('/', (req,res) => {
     })
 })
 
+// endpoint to get the specific user's post 
+router.get('/profile' , (req,res) => {
+    //  get user's post based on ID
+    console.log(req.query.userid);
+    console.log('inside profile')
+    Post.find({userid:req.query.userid}, (err,posts) => {
+        if (err) return res.send(err)
+        else {
+            res.json({
+                data:posts,
+                success:true
+            })
+        }
+    })
+})
+
 // endpoint for the user to tweet
 router.post('/tweet/post', (req,res) => {
     
     post = new Post(req.body)
-    console.log('sending endpoiny')
+    // set the date for the post before saving it
+    post['date'] = new Date().toLocaleString('en-US', { timeZone: 'EST' });
     post.save((err,data) => {
         if (err) return res.send(err)
         else return res.send(data)

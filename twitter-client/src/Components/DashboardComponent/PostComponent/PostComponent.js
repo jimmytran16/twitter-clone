@@ -10,7 +10,6 @@ import moment from 'moment'
 function PostComponent(props) {
     return (
         <Card style={{ borderRadius: 'unset' }}>
-            {moment().format()}
             <Card.Body>
                 <Row>
                     <Col xs={2} sm={2} md={2}>
@@ -20,7 +19,7 @@ function PostComponent(props) {
                     </Col>
                     <Col xs={10} sm={10} md={10}>
                         <blockquote className="blockquote mb-0">
-                            <div className="user-name-container"> <p>{props.name}</p> <span>@jjimmytrann • {moment('2020-12-02T12:15:42-05:00').fromNow()} </span> </div>
+                            <div className="user-name-container"> <p>{props.name}</p> <span>@{props.username} • {moment(props.date).fromNow()} </span> </div>
                             <p>
                                 {props.tweet}
                             </p>

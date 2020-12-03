@@ -30,3 +30,8 @@
 .navigation-container a:hover{
     background-color: #cee5ff;
 }
+
+.no-tweet-yet-container {
+    text-align: center;
+    margin-top: 50px;
+}

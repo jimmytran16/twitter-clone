@@ -15,6 +15,8 @@ function DashboardComponent() {
 
     const history = useHistory()
 
+    axios.defaults.withCredentials = true;
+
     useEffect(() => {
 
         if(!localStorage['user']) {
@@ -26,14 +28,20 @@ function DashboardComponent() {
         setUserData(JSON.parse(localStorage['user']))
 
         // call the api to get all of the posts
-        axios.get('http://localhost:3001/home')
+        axios({
+            method: 'GET',
+            withCredentials: true,
+            url: 'http://localhost:3001/home'
+        })
         .then(response => {
             if (response.data.success) {
                 console.log(response.data.data)
                 setPosts(response.data.data.reverse())
             }
         })
-        .catch(err => console.error(err))
+        .catch(err => console.error(err));
+
+
     },[refresh])
 
     const handleTweetSubmission = () => {
@@ -42,7 +50,6 @@ function DashboardComponent() {
             username: userData.phone,
             name: userData.name,
             tweet: tweet,
-            date: new Date().toLocaleString()
         })
         .then(response => {
             console.log(response.data)
@@ -68,7 +75,9 @@ function DashboardComponent() {
     return (
         <>
             <Container>
-                Welcome { userData.name } <Button onClick={handleLogout}>Logout</Button>
+                <div className="welcome-user-container"> 
+                    <p>Welcome, { userData.name }</p> <Button onClick={handleLogout}>Logout</Button>
+                </div>
                 <Card style={{ marginBottom: '10px', borderRadius: 'unset' }}>
                     <Card.Body>
                         <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -83,7 +92,9 @@ function DashboardComponent() {
                 {
                     posts.map((post,key) => {
                         return (
-                            <PostComponent tweet={post.tweet} name={post.name} date={post.date.split('T')[0]} key={key} />
+                            <>
+                        <h2>{post.username}</h2>
+                            <PostComponent username={post.username} tweet={post.tweet} name={post.name} date={post.date.split('T')[0]} key={key} /></>
                         )
                     })
                 }

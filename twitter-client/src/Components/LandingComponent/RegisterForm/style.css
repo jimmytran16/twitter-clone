@@ -26,6 +26,14 @@
     text-align: center;
 }
 
+.sign-up-btn-container button {
+    margin: 5px auto;
+}
+
+.sign-up-btn-container button, .sign-up-btn-container span {
+    display: block;
+}
+
 .modal-content {
     border-radius: 15px!important;
 }

@@ -32,8 +32,8 @@ var loginRoutes = function(passport){
 // middleware function to check if the user's phone number exist
 function checkIfUserExist (req,res,next) {
     User.findOne({username:req.body.username},(err,data) =>{
-        if (err) return res.send('error trying to find user')
-        return (!data) ?  res.send('user does not exist') : next();
+        if (err) return res.send('ERROR querying DATABASE')
+        return (!data) ?  res.json({message:'User does not exists!',success:false}) : next();
     })
 }
 

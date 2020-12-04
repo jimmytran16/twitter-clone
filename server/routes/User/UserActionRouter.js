@@ -47,4 +47,10 @@ router.post('/tweet/post', (req,res) => {
         else return res.send(data)
     })
 })
+
+// endpoint to logout
+router.post('/logout', (req,res) => {
+    req.logOut();
+    res.send('successfully logged out!')
+})
 module.exports = router;

@@ -3,6 +3,7 @@ import './style.css'
 import { Form, Button } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
+import Configs from '../../../Configs'
 
 const LOGGING_IN_VALUE = 'Logging in...'
 const LOG_IN_BUTTON_DEFAULT_VALUE = 'Log in'
@@ -11,6 +12,8 @@ function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loginButtonVal, setLoginButtonVal] = useState("Log in");
+    const [loginMessage, setLoginMessage] = useState(null);
+
     const history = useHistory()
 
 
@@ -25,32 +28,25 @@ function LoginForm() {
                     password: password
                 },
                 withCredentials: true,
-                url: 'https://twitter-cl0ne-api.herokuapp.com/auth/signin'
+                url: `${Configs.SERVER_URL}/auth/signin`
             })
                 .then(response => {
                     console.log(response.data)
                     setLoginButtonVal(LOG_IN_BUTTON_DEFAULT_VALUE)
                     // go to the user's dashboard
-                    if(response.data.success){
-                        localStorage.setItem('user',JSON.stringify(response.data.message));
-                        console.log('inside local',JSON.parse(localStorage['user']))
+                    if (response.data.success) {
+                        localStorage.setItem('user', JSON.stringify(response.data.message));
+                        console.log('inside local', JSON.parse(localStorage['user']))
                         history.push('/dashboard');
-                        
+
+                    } else {
+                        setLoginMessage(response.data.message)
                     }
                 })
                 .catch(err => console.error(err))
         }, 2000)
     }
 
-    const getUserData = () => {
-        axios({
-            method: 'GET',
-            withCredentials: true,
-            url: 'https://twitter-cl0ne-api.herokuapp.com/user/userdata'
-        })
-        .then(response => console.log(response.data))
-        .catch(err => console.error(err));
-    }
     return (
         <Form onSubmit={handleLoginSubmission} className="login-form" inline>
             <Form.Control
@@ -71,9 +67,11 @@ function LoginForm() {
             <Button type="submit" className="mb-2 login-btn">
                 {loginButtonVal}
             </Button>
-            {/* <Button onClick={getUserData} type="submit" className="mb-2 login-btn">
-                Get Data
-            </Button> */}
+            {
+                loginMessage
+                    ? (<span style={loginMsgStyle}>{loginMessage}</span>)
+                    : (<span></span>)
+            }
         </Form>
     )
 }
@@ -83,6 +81,10 @@ const inputStyle = {
     borderBottom: '3px lightgrey solid',
     borderRadius: 'unset',
     backgroundColor: 'transparent',
+    color: 'white'
+}
+
+const loginMsgStyle = {
     color: 'white'
 }
 

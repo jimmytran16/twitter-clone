@@ -4,6 +4,7 @@ import './style.css'
 import { Form, Container, Card, Button } from 'react-bootstrap'
 import PostComponent from './PostComponent/PostComponent'
 import axios from 'axios'
+import Config from '../../Configs'
 
 
 
@@ -31,7 +32,7 @@ function DashboardComponent() {
         axios({
             method: 'GET',
             withCredentials: true,
-            url: 'https://twitter-cl0ne-api.herokuapp.com/home'
+            url: `${Config.SERVER_URL}/home`
         })
         .then(response => {
             if (response.data.success) {
@@ -45,7 +46,7 @@ function DashboardComponent() {
     },[refresh])
 
     const handleTweetSubmission = () => {
-        axios.post('https://twitter-cl0ne-api.herokuapp.com/home/tweet/post',{
+        axios.post(`${Config.SERVER_URL}/home/tweet/post`,{
             userid:userData._id,
             username: userData.phone,
             name: userData.name,
@@ -62,7 +63,7 @@ function DashboardComponent() {
         axios({
             method: 'POST',
             withCredentials: true,
-            url: 'https://twitter-cl0ne-api.herokuapp.com/user/logout'
+            url: `${Config.SERVER_URL}/home/logout`
         })
         .then(response => {
             console.log(response.data);

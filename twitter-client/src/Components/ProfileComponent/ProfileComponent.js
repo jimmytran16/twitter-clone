@@ -6,6 +6,7 @@ import avatarImg from '../../avatar.png'
 import { faBreadSlice } from '@fortawesome/free-solid-svg-icons'
 import Axios from 'axios'
 import { useHistory } from 'react-router-dom'
+import Config from '../../Configs'
 
 
 const cardBodyStyleHeader = {
@@ -53,7 +54,7 @@ function ProfileComponent() {
         setUserData(USER_DATA);
 
         // call api to get all of the posts of that user
-        Axios.get(`https://twitter-cl0ne-api.herokuapp.com/home/profile?userid=${USER_DATA._id}`)
+        Axios.get(`${Config.SERVER_URL}/home/profile?userid=${USER_DATA._id}`)
             .then(response => setUsersPost(response.data.data.reverse()))
             .catch(err => console.error(err));
 

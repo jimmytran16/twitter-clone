@@ -6,9 +6,8 @@ const mongoose = require('mongoose')
 const passport = require('passport')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
-const SignUpRouter = require('./routes/User/UserRouter')
 const MainRouter = require('./routes/Main/MainRouter')
-const UserActionRouter = require('./routes/UserAction/UserActionRouter')
+const UserActionRouter = require('./routes/User/UserActionRouter')
 const UserAuthLogin = require('./routes/Auth/LoginRouter')
 const morgan = require('morgan')
 if (process.env.NODE_ENV !== 'production') {
@@ -37,7 +36,6 @@ require('./passportConfig')(passport)
 
 // routers
 app.use('/', MainRouter);
-app.use('/user',SignUpRouter);
 app.use('/home',UserActionRouter);
 app.use('/auth', UserAuthLogin(passport));
 

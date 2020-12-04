@@ -4,6 +4,7 @@ import { Modal, Form, Button, Col } from 'react-bootstrap'
 import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
+import Configs from '../../../Configs'
 
 // initialize the months, days ,and years for the birthday drop downs
 const months = ["January", "February", "March", "April", "May", "June",
@@ -27,6 +28,7 @@ function RegisterForm(props) {
     const [day,setDay] = useState(days[0]);
     const [year,setYear] = useState(years[0]);
     const [phone,setPhone] = useState("");
+    const [successSignUp,setSuccessSignUp] = useState(null);
      
     useEffect(() => {
         setShow(props.show);
@@ -34,14 +36,31 @@ function RegisterForm(props) {
 
     const handleRegistration  = (e) => {
         console.log('registration handling')
-        axios.post('https://twitter-cl0ne-api.herokuapp.com/user/signup',{
+        axios.post(`${Configs.SERVER_URL}/signup`,{
             name:name,
             username:username,
             password:password,
             birthday:month + '-' + day + '-' + year,
             phone:phone
         })
-        .then(response => console.log(response.data))
+        .then(response => {
+            console.log(response.data);
+            if (response.data.success) {
+                setSuccessSignUp({
+                    msg: 'Sucessfully Signed up!',
+                    style: {
+                        color:'green'
+                    }
+                })
+            }else {
+                setSuccessSignUp({
+                    msg: 'User Already Exists!',
+                    style: {
+                        color:'red'
+                    }
+                })
+            }
+        })
         .catch(err => console.error(err))
     }
 
@@ -112,6 +131,10 @@ function RegisterForm(props) {
                         <Button className="next-btn" variant="primary" onClick={handleRegistration}>
                             Sign Up
                         </Button>
+                        { successSignUp
+                        ? (<span style={successSignUp.style}>{successSignUp.msg}</span>)
+                        : (<span></span>)
+                        }
                     </div>
                 </Form>
             </Modal.Body>
@@ -127,5 +150,12 @@ const inputStyle = {
     borderRadius: 'unset',
 }
 
+const successSignUpSpan = {
+    color:'green'
+}
+
+const failSignUpSpan = {
+    color:'red'
+}
 
 export default RegisterForm;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import './style.css'
 import { Form, Container, Card, Button } from 'react-bootstrap'
@@ -6,8 +6,9 @@ import PostComponent from './PostComponent/PostComponent'
 import axios from 'axios'
 import Config from '../../Configs'
 
-
-
+/**
+ * Componenet function that represents the user's dashboard
+*/
 function DashboardComponent() {
     const [tweet,setTweet] = useState("");
     const [posts,setPosts] = useState([]);
@@ -16,7 +17,8 @@ function DashboardComponent() {
 
     const history = useHistory()
 
-    axios.defaults.withCredentials = true;
+    // set the axios defaults to send the cookies in request 
+    // axios.defaults.withCredentials = true;
 
     useEffect(() => {
 
@@ -45,20 +47,23 @@ function DashboardComponent() {
 
     },[refresh])
 
+    // func to handle the tweet submit
     const handleTweetSubmission = () => {
         axios.post(`${Config.SERVER_URL}/home/tweet/post`,{
             userid:userData._id,
             username: userData.phone,
             name: userData.name,
             tweet: tweet,
-        })
+        }, { withCredentials:true })
         .then(response => {
             console.log(response.data)
+            clearTweetFields() 
             setRefresh(!refresh)
         })
         .catch(err => console.error(err))
     }
 
+    // func to handle the logout 
     const handleLogout = () => {
         axios({
             method: 'POST',
@@ -73,16 +78,22 @@ function DashboardComponent() {
         .catch(err => console.error(err));
     }
 
+    // function to clear the text area field 
+    const clearTweetFields = () => {
+        document.getElementsByClassName('tweet-text-area')[0].value = ''
+    }
+
     return (
         <>
             <Container>
                 <div className="welcome-user-container"> 
-                    <p>Welcome, { userData.name }</p> <Button onClick={handleLogout}>Logout</Button>
+                    <p>Welcome, { userData.name }</p> 
+                    <Button onClick={handleLogout}>Logout</Button>
                 </div>
                 <Card style={{ marginBottom: '10px', borderRadius: 'unset' }}>
                     <Card.Body>
                         <Form.Group controlId="exampleForm.ControlTextarea1">
-                            <Form.Control onChange={(e) => setTweet(e.target.value)} style={{border:'unset'}} as="textarea" rows={3} placeholder="What's happening?" />
+                            <Form.Control className="tweet-text-area" onChange={(e) => setTweet(e.target.value)} style={{border:'unset'}} as="textarea" rows={3} placeholder="What's happening?" ></Form.Control>
                             <hr />
                             <div className="tweet-btn-container">
                                 <Button onClick={handleTweetSubmission} >Tweet</Button>
@@ -93,9 +104,7 @@ function DashboardComponent() {
                 {
                     posts.map((post,key) => {
                         return (
-                            <>
-                        <h2>{post.username}</h2>
-                            <PostComponent username={post.username} tweet={post.tweet} name={post.name} date={post.date.split('T')[0]} key={key} /></>
+                            <PostComponent refresh={refresh} setRefresh={setRefresh} post={post} key={key} />
                         )
                     })
                 }

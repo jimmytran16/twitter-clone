@@ -8,7 +8,7 @@ import Axios from 'axios'
 import { useHistory } from 'react-router-dom'
 import Config from '../../Configs'
 
-
+// Styles
 const cardBodyStyleHeader = {
     height: "10vh"
 }
@@ -30,6 +30,9 @@ const navLinkOnClickStyling = {
     borderColor: '#08a0e9!important'
 }
 
+/**
+ * Componenet function that represents the user's profile page
+ */
 function ProfileComponent() {
     const [tweetsBtnStyling, setTweetsBtnStyling] = useState(navLinkDefaultStyling)
     const [repliesBtnStyling, setRepliesBtnStyling] = useState(navLinkDefaultStyling)
@@ -40,6 +43,7 @@ function ProfileComponent() {
 
     const history = useHistory()
 
+    // set axios to send out requests with cookies included
     Axios.defaults.withCredentials = true;
 
     useEffect(() => {
@@ -94,7 +98,8 @@ function ProfileComponent() {
                 break;
         }
     }
-
+    
+    // JSX that represents content of when user has no tweets yet
     const noTweetYetContent = (<div className="no-tweet-yet-container">
         <h5>You haven't tweeted yet</h5>
         <p>When you post a tweet, it'll show up here.</p>
@@ -151,7 +156,7 @@ function ProfileComponent() {
                     )
                     : userPost.map((post, index) => {
                         return (
-                            <PostComponent key={index} tweet={post.tweet} date={post.date} name={post.name} username={post.username} />
+                            <PostComponent key={index} tweet={post.tweet} post={post} profile={true} />
                         )
                     })
             }

@@ -19,6 +19,12 @@ const years = [2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010,
 
 const days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
+/**
+ * Componenet function that represents the Register form 
+ * @param {Object} props - data that are sent to the component.
+ * @param {String} props.show - a boolean tells the sign up modal to show or not
+*/
+
 function RegisterForm(props) {
     const [show, setShow] = useState(props.show);
     const [name, setName] = useState("");
@@ -144,6 +150,7 @@ function RegisterForm(props) {
     )
 }
 
+// Styles
 const inputStyle = {
     height: '60px',
     borderBottom: '3px lightgrey solid',

@@ -27,9 +27,70 @@
     font-size: 12px;
 }
 
+.post-icons-container div {
+    display: flex;
+    align-items: center;
+}
+
+#COMMENT svg:hover {
+    background-color: #08a0e94f;
+    border-radius: 25px;
+    color:#08a0e9;
+}
+#RETWEET svg:hover {
+    background-color: #e9f5e9;
+    border-radius: 25px;
+    color:green;
+}
+#LIKE svg:hover {
+    background-color: #da66662e;
+    border-radius: 25px;
+    color:#da6666;
+}
+#LINKOFF svg:hover {
+    background-color: #08a0e94f;
+    border-radius: 25px;
+    color:#08a0e9;
+}
+
+#COMMENT svg:hover + .comment-span {
+    font-weight: bolder;
+    color:#08a0e9;
+}
+
+#RETWEET svg:hover + .retweet-span {
+    font-weight: bolder;
+    color:green;
+}
+
+#LIKE svg:hover + .like-span {
+    font-weight: bolder;
+    color:#da6666;
+}
+
+#LINKOFF svg:hover + .linkoff-span {
+    font-weight: bolder;
+    color:#08a0e9;
+}
+
+
+/* 
+#COMMENT svg span:hover {
+    color:#08a0e9;
+    font-weight: ;
+} */
+
+.svg-inline--fa {
+    margin: 0px 4px;
+}
+
 @media screen and (max-width:768px) {
     .user-profile-tweet-image { 
         width: 100%;
     }
+    .svg-inline--fa {
+        margin: 0px 2px;
+    }
+    
 }
 

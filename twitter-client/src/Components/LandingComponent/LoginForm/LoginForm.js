@@ -8,6 +8,9 @@ import Configs from '../../../Configs'
 const LOGGING_IN_VALUE = 'Logging in...'
 const LOG_IN_BUTTON_DEFAULT_VALUE = 'Log in'
 
+/**
+ * Componenet function that represents the login form
+*/
 function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -70,12 +73,13 @@ function LoginForm() {
             {
                 loginMessage
                     ? (<span style={loginMsgStyle}>{loginMessage}</span>)
-                    : (<span></span>)
+                    : (<></>)
             }
         </Form>
     )
 }
 
+// Styles
 const inputStyle = {
     height: '60px',
     borderBottom: '3px lightgrey solid',

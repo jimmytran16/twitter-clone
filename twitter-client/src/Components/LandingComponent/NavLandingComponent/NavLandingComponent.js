@@ -6,7 +6,9 @@ import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons'
 import RegisterForm from '../RegisterForm/RegisterForm'
 
 
-
+/**
+ * Componenet function that represents the login and sign up navigation
+*/
 function NavLandingComponent() {
     const [show, setShow] = useState(false);
 

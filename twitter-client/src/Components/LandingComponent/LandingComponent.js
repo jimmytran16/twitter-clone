@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react'
 import './style.css'
 import LoginForm from './LoginForm/LoginForm'
-import RegisterForm from './RegisterForm/RegisterForm'
 import NavLandingComponent from './NavLandingComponent/NavLandingComponent'
 import { Row, Col } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faUserFriends, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { useHistory } from 'react-router-dom'
 
+/**
+  * Componenet function that represents the landing/main page of the website
+*/ 
 function LandingComponent() {
     const history = useHistory()
     useEffect(() => {

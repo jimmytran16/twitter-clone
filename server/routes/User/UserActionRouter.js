@@ -53,7 +53,7 @@ router.post('/interaction', checkIfAuth, (req,res) => {
     console.log(req.body)
     // check if the the body's data contains all data
     if (!req.body || !req.body.action || !req.body.id) {
-        res.json({
+        return res.json({
             message:'id and action required in request body!',
             success:false
         })
@@ -74,11 +74,10 @@ router.post('/interaction', checkIfAuth, (req,res) => {
             INTERACTION_TYPE = {$inc:{likes:1}}
             break;
         default:
-            res.json({
+            return res.json({
                 message:'ACTION INVALID',
                 success:false
             })
-            break;
     }
     // update the post 
     Post.findOneAndUpdate({_id : req.body.id }, INTERACTION_TYPE, (err, response) => {
@@ -99,13 +98,25 @@ router.post('/interaction', checkIfAuth, (req,res) => {
 
 // middleware function to check if the user is authorized
 function checkIfAuth (req,res,next) {
-    console.log(req.session)
+    console.log("INSIDE AUTH MIDDLWARE",req.session)
     if (!req.session.passport || !req.session.passport.user) {
         return res.json({
             message: 'No authorization',
             success: false
         })
     }
+    // if (!req.isAuthenticated()) {
+    //     return res.json({
+    //         message: 'No authorization',
+    //         success: false
+    //     })
+    // }
+    // if (!req.session.passport.user) {
+    //     return res.json({
+    //         message: 'No authorization',
+    //         success: false
+    //     })
+    // }
     next();
 }
 

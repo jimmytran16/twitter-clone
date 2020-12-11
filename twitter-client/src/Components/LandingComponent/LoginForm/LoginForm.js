@@ -25,28 +25,34 @@ function LoginForm() {
         setLoginButtonVal(LOGGING_IN_VALUE)
         setTimeout(() => {
             axios({
-                method: 'POST',
+                method: "post",
                 data: {
                     username: username,
                     password: password
                 },
+                url:`${Configs.SERVER_URL}/auth/signin`,
                 withCredentials: true,
-                url: `${Configs.SERVER_URL}/auth/signin`
+                // url: `${Configs.SERVER_URL}/auth/signin`
             })
-                .then(response => {
-                    console.log(response.data)
-                    setLoginButtonVal(LOG_IN_BUTTON_DEFAULT_VALUE)
-                    // go to the user's dashboard
-                    if (response.data.success) {
-                        localStorage.setItem('user', JSON.stringify(response.data.message));
-                        console.log('inside local', JSON.parse(localStorage['user']))
-                        history.push('/dashboard');
+            .then(response => {
+                console.log(response.data)
+                setLoginButtonVal(LOG_IN_BUTTON_DEFAULT_VALUE)
+                // go to the user's dashboard
+                if (response.data.success) {
+                    localStorage.setItem('user', JSON.stringify(response.data.message));
+                    console.log('inside local', JSON.parse(localStorage['user']))
+                    history.push('/dashboard');
 
-                    } else {
-                        setLoginMessage(response.data.message)
-                    }
-                })
-                .catch(err => console.error(err))
+                } else {
+                    setLoginMessage(response.data.message)
+                }
+            })
+            .catch(err => console.error(err))
+            let data = {
+                username:username,
+                password:password
+            }
+            console.log(data);
         }, 2000)
     }
 

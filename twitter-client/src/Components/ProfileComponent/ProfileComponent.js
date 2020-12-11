@@ -43,8 +43,8 @@ function ProfileComponent() {
 
     const history = useHistory()
 
-    // set axios to send out requests with cookies included
-    Axios.defaults.withCredentials = true;
+    // // set axios to send out requests with cookies included
+    // Axios.defaults.withCredentials = true;
 
     useEffect(() => {
         // validate if the user is currently in here
@@ -58,9 +58,12 @@ function ProfileComponent() {
         setUserData(USER_DATA);
 
         // call api to get all of the posts of that user
-        Axios.get(`${Config.SERVER_URL}/home/profile?userid=${USER_DATA._id}`)
-            .then(response => setUsersPost(response.data.data.reverse()))
-            .catch(err => console.error(err));
+        Axios(`${Config.SERVER_URL}/home/profile?userid=${USER_DATA._id}`,{
+            method:'get',
+            withCredentials:true
+        })
+        .then(response => setUsersPost(response.data.data.reverse()))
+        .catch(err => console.error(err));
 
     }, [])
 

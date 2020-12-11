@@ -17,7 +17,7 @@ var loginRoutes = function(passport){
             else {
                 req.logIn(user,err => {
                     if (err) throw err;
-                    res.json({
+                    return res.json({
                         message:req.user,
                         success: true
                     })

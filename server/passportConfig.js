@@ -23,14 +23,13 @@ module.exports = function (passport) {
   );
 
   passport.serializeUser((user, cb) => {
-    cb(null, user.id);
+    console.log('inside serializer',user)
+    cb(null, user._id);
   });
   passport.deserializeUser((id, cb) => {
     User.findOne({ _id: id }, (err, user) => {
-      const userInformation = {
-        username: user,
-      };
-      cb(err, userInformation);
+      console.log('inside serializer',user)
+      cb(err, user);
     });
   });
 };

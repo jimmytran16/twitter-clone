@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import './style.css'
 import { faComment, faRecycle, faHeart, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,7 +9,7 @@ import axios from 'axios'
 import Config from '../../../Configs'
 
 // set axios requests to include cookie 
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 
 /**
     * Componenet function that represents each user's individual posts
@@ -31,13 +31,14 @@ function PostComponent(props) {
         if (props.profile) {
             return;
         }
-        // call the endpoint to make the interaction update, passing in the post ID, and the interaction ACTION
-        axios.post(`${Config.SERVER_URL}/home/interaction`, { id:props.post._id, action:e.currentTarget.id })
+        // // call the endpoint to make the interaction update, passing in the post ID, and the interaction ACTION
+        axios.post(`${Config.SERVER_URL}/home/interaction`, { id:props.post._id, action:e.currentTarget.id }, {withCredentials:true})
         .then(response => {
             console.log(response.data)
             props.setRefresh(!props.refresh)
         })
         .catch(err => console.error(err));
+
     }
 
     return (

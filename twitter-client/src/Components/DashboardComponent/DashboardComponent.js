@@ -31,10 +31,10 @@ function DashboardComponent() {
         setUserData(JSON.parse(localStorage['user']))
 
         // call the api to get all of the posts
-        axios({
-            method: 'GET',
+        axios(`${Config.SERVER_URL}/home`,{
+            method: 'get',
             withCredentials: true,
-            url: `${Config.SERVER_URL}/home`
+            // url: `${Config.SERVER_URL}/home`
         })
         .then(response => {
             if (response.data.success) {
@@ -43,7 +43,6 @@ function DashboardComponent() {
             }
         })
         .catch(err => console.error(err));
-
 
     },[refresh])
 

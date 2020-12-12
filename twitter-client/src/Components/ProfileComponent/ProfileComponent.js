@@ -3,7 +3,6 @@ import './style.css'
 import PostComponent from '../DashboardComponent/PostComponent/PostComponent'
 import { Container, Nav, Card, Button, Row, Col } from 'react-bootstrap'
 import avatarImg from '../../avatar.png'
-import { faBreadSlice } from '@fortawesome/free-solid-svg-icons'
 import Axios from 'axios'
 import { useHistory } from 'react-router-dom'
 import Config from '../../Configs'
@@ -43,9 +42,6 @@ function ProfileComponent() {
 
     const history = useHistory()
 
-    // // set axios to send out requests with cookies included
-    // Axios.defaults.withCredentials = true;
-
     useEffect(() => {
         // validate if the user is currently in here
         if (!localStorage['user']) {
@@ -60,7 +56,9 @@ function ProfileComponent() {
         // call api to get all of the posts of that user
         Axios(`${Config.SERVER_URL}/home/profile?userid=${USER_DATA._id}`,{
             method:'get',
-            withCredentials:true
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('accessToken')}`
+            },
         })
         .then(response => setUsersPost(response.data.data.reverse()))
         .catch(err => console.error(err));

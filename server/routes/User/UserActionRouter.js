@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const Post = require('../../model/postSchema')
+const jwt = require('jsonwebtoken')
+
+if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 
 // route for the user's dashboard (retrieve the tweets)
 router.get('/', (req,res) => {
@@ -21,7 +24,7 @@ router.get('/', (req,res) => {
 })
 
 // endpoint to get the specific user's post 
-router.get('/profile' , checkIfAuth, (req,res) => {
+router.get('/profile',authenticateUser, (req,res) => {
     //  get user's post based on ID
     console.log(req.query.userid);
     console.log('inside profile')
@@ -37,7 +40,7 @@ router.get('/profile' , checkIfAuth, (req,res) => {
 })
 
 // endpoint for the user to tweet
-router.post('/tweet/post', checkIfAuth, (req,res) => {
+router.post('/tweet/post',authenticateUser, (req,res) => {
     
     post = new Post(req.body)
     // set the date for the post before saving it
@@ -49,7 +52,7 @@ router.post('/tweet/post', checkIfAuth, (req,res) => {
 })
 
 // endpoint for user to like a post
-router.post('/interaction', checkIfAuth, (req,res) => {
+router.post('/interaction', authenticateUser, (req,res) => {
     console.log(req.body)
     // check if the the body's data contains all data
     if (!req.body || !req.body.action || !req.body.id) {
@@ -96,33 +99,26 @@ router.post('/interaction', checkIfAuth, (req,res) => {
     })
 })
 
-// middleware function to check if the user is authorized
-function checkIfAuth (req,res,next) {
-    console.log("INSIDE AUTH MIDDLWARE",req.session)
-    if (!req.session.passport || !req.session.passport.user) {
+// middleware function to authorizate the user to use certain endpoints
+function authenticateUser(req,res,next) {
+    // validate to ensure that there is an authorization token passed into the header
+    if(!req.headers || !req.headers.authorization) {
         return res.json({
-            message: 'No authorization',
-            success: false
+            message:'Unauthorized!',
+            err:'Please include an Authorization header',
+            success:false
         })
     }
-    // if (!req.isAuthenticated()) {
-    //     return res.json({
-    //         message: 'No authorization',
-    //         success: false
-    //     })
-    // }
-    // if (!req.session.passport.user) {
-    //     return res.json({
-    //         message: 'No authorization',
-    //         success: false
-    //     })
-    // }
-    next();
+    // verify the jwt token
+    jwt.verify(req.headers.authorization.split(' ')[1], process.env.ACCESS_TOKEN_SECRET, (err , result) => {
+        if (err) {
+            return res.json({
+                message:err,
+                msg:'Unauthorized!',
+                success:false
+            })
+        }
+        next();
+    })
 }
-
-// endpoint to logout
-router.post('/logout', (req,res) => {
-    req.logOut();
-    res.send('successfully logged out!')
-})
 module.exports = router;

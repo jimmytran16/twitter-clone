@@ -22,7 +22,7 @@ import Config from '../../../Configs'
  */
 
 function PostComponent(props) {
-    
+
     // func to handle the interactions (COMMENT,RETWEET,LIKES,LINK OFFS)
     const handleInteraction = (e) => {
         e.preventDefault()
@@ -31,8 +31,17 @@ function PostComponent(props) {
         if (props.profile) {
             return;
         }
-        // // call the endpoint to make the interaction update, passing in the post ID, and the interaction ACTION
-        axios.post(`${Config.SERVER_URL}/home/interaction`, { id:props.post._id, action:e.currentTarget.id }, {withCredentials:true})
+        // call the endpoint to update the post's interaction
+        axios({
+            method: 'post',
+            url: `${Config.SERVER_URL}/home/interaction`,
+            headers: {
+                authorization: `bearer ${localStorage.getItem('accessToken')}`
+            },
+            data: {
+                id: props.post._id, action: e.currentTarget.id
+            },
+        })
         .then(response => {
             console.log(response.data)
             props.setRefresh(!props.refresh)
@@ -80,6 +89,5 @@ function PostComponent(props) {
         </Card>
     )
 }
-
 
 export default PostComponent

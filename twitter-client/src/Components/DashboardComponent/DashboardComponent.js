@@ -10,19 +10,17 @@ import Config from '../../Configs'
  * Componenet function that represents the user's dashboard
 */
 function DashboardComponent() {
-    const [tweet,setTweet] = useState("");
-    const [posts,setPosts] = useState([]);
-    const [refresh,setRefresh] = useState(false);
-    const [userData,setUserData] = useState({})
+    const [tweet, setTweet] = useState("");
+    const [posts, setPosts] = useState([]);
+    const [refresh, setRefresh] = useState(false);
+    const [userData, setUserData] = useState({})
 
     const history = useHistory()
 
     // set the axios defaults to send the cookies in request 
-    // axios.defaults.withCredentials = true;
-
     useEffect(() => {
 
-        if(!localStorage['user']) {
+        if (!localStorage['user']) {
             history.push('/')
             return
         }
@@ -31,10 +29,8 @@ function DashboardComponent() {
         setUserData(JSON.parse(localStorage['user']))
 
         // call the api to get all of the posts
-        axios(`${Config.SERVER_URL}/home`,{
+        axios(`${Config.SERVER_URL}/home`, {
             method: 'get',
-            withCredentials: true,
-            // url: `${Config.SERVER_URL}/home`
         })
         .then(response => {
             if (response.data.success) {
@@ -44,37 +40,38 @@ function DashboardComponent() {
         })
         .catch(err => console.error(err));
 
-    },[refresh])
+    }, [refresh])
 
     // func to handle the tweet submit
     const handleTweetSubmission = () => {
-        axios.post(`${Config.SERVER_URL}/home/tweet/post`,{
-            userid:userData._id,
-            username: userData.phone,
-            name: userData.name,
-            tweet: tweet,
-        }, { withCredentials:true })
-        .then(response => {
-            console.log(response.data)
-            clearTweetFields() 
-            setRefresh(!refresh)
+
+        axios({
+            method:'post',
+            url: `${Config.SERVER_URL}/home/tweet/post`,
+            headers: {
+                authorization: `bearer ${localStorage.getItem('accessToken')}`
+            },
+            data: {
+                userid: userData._id,
+                username: userData.username,
+                name: userData.name,
+                tweet: tweet,
+            }
         })
-        .catch(err => console.error(err))
+            .then(response => {
+                console.log(response.data)
+                clearTweetFields()
+                setRefresh(!refresh)
+            })
+            .catch(err => console.error(err))
     }
 
     // func to handle the logout 
     const handleLogout = () => {
-        axios({
-            method: 'POST',
-            withCredentials: true,
-            url: `${Config.SERVER_URL}/home/logout`
-        })
-        .then(response => {
-            console.log(response.data);
-            delete localStorage['user'];
-            history.push('/')
-        })
-        .catch(err => console.error(err));
+        delete localStorage['user'];
+        delete localStorage['accessToken']
+        delete localStorage['refreshToken']
+        history.push('/')
     }
 
     // function to clear the text area field 
@@ -85,14 +82,14 @@ function DashboardComponent() {
     return (
         <>
             <Container>
-                <div className="welcome-user-container"> 
-                    <p>Welcome, { userData.name }</p> 
+                <div className="welcome-user-container">
+                    <p>Welcome, {userData.name}</p>
                     <Button onClick={handleLogout}>Logout</Button>
                 </div>
                 <Card style={{ marginBottom: '10px', borderRadius: 'unset' }}>
                     <Card.Body>
                         <Form.Group controlId="exampleForm.ControlTextarea1">
-                            <Form.Control className="tweet-text-area" onChange={(e) => setTweet(e.target.value)} style={{border:'unset'}} as="textarea" rows={3} placeholder="What's happening?" ></Form.Control>
+                            <Form.Control className="tweet-text-area" onChange={(e) => setTweet(e.target.value)} style={{ border: 'unset' }} as="textarea" rows={3} placeholder="What's happening?" ></Form.Control>
                             <hr />
                             <div className="tweet-btn-container">
                                 <Button onClick={handleTweetSubmission} >Tweet</Button>
@@ -101,7 +98,7 @@ function DashboardComponent() {
                     </Card.Body>
                 </Card>
                 {
-                    posts.map((post,key) => {
+                    posts.map((post, key) => {
                         return (
                             <PostComponent refresh={refresh} setRefresh={setRefresh} post={post} key={key} />
                         )

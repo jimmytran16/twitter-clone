@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import Configs from '../../../Configs'
 
+axios.defaults.withCredentials = true
 const LOGGING_IN_VALUE = 'Logging in...'
 const LOG_IN_BUTTON_DEFAULT_VALUE = 'Log in'
 
@@ -31,15 +32,15 @@ function LoginForm() {
                     password: password
                 },
                 url:`${Configs.SERVER_URL}/auth/signin`,
-                withCredentials: true,
-                // url: `${Configs.SERVER_URL}/auth/signin`
             })
             .then(response => {
                 console.log(response.data)
                 setLoginButtonVal(LOG_IN_BUTTON_DEFAULT_VALUE)
                 // go to the user's dashboard
                 if (response.data.success) {
-                    localStorage.setItem('user', JSON.stringify(response.data.message));
+                    localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                    localStorage.setItem("accessToken", response.data.data.accessToken);
+                    localStorage.setItem("refreshToken", response.data.data.refreshToken);
                     console.log('inside local', JSON.parse(localStorage['user']))
                     history.push('/dashboard');
 

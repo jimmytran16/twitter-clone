@@ -7,6 +7,7 @@ import { Card, Row, Col } from 'react-bootstrap'
 import moment from 'moment'
 import axios from 'axios'
 import Config from '../../../Configs'
+import clearLocalStorageData from '../../../Helpers/helpers'
 
 // set axios requests to include cookie 
 // axios.defaults.withCredentials = true;
@@ -44,6 +45,8 @@ function PostComponent(props) {
         })
         .then(response => {
             console.log(response.data)
+            
+            if (!response.data.success && response.data.msg === 'Unauthorized!') clearLocalStorageData()
             props.setRefresh(!props.refresh)
         })
         .catch(err => console.error(err));

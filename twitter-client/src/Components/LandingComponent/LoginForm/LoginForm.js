@@ -4,9 +4,11 @@ import { Form, Button } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import Configs from '../../../Configs'
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 axios.defaults.withCredentials = true
-const LOGGING_IN_VALUE = 'Logging in...'
+const LOGGING_IN_VALUE = ''
 const LOG_IN_BUTTON_DEFAULT_VALUE = 'Log in'
 
 /**
@@ -15,8 +17,9 @@ const LOG_IN_BUTTON_DEFAULT_VALUE = 'Log in'
 function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [loginButtonVal, setLoginButtonVal] = useState("Log in");
+    const [loginButtonVal, setLoginButtonVal] = useState(LOG_IN_BUTTON_DEFAULT_VALUE);
     const [loginMessage, setLoginMessage] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const history = useHistory()
 
@@ -24,6 +27,7 @@ function LoginForm() {
     const handleLoginSubmission = (e) => {
         e.preventDefault();
         setLoginButtonVal(LOGGING_IN_VALUE)
+        setIsLoading(false)
         setTimeout(() => {
             axios({
                 method: "post",
@@ -31,27 +35,28 @@ function LoginForm() {
                     username: username,
                     password: password
                 },
-                url:`${Configs.SERVER_URL}/auth/signin`,
+                url: `${Configs.SERVER_URL}/auth/signin`,
             })
-            .then(response => {
-                console.log(response.data)
-                setLoginButtonVal(LOG_IN_BUTTON_DEFAULT_VALUE)
-                // go to the user's dashboard
-                if (response.data.success) {
-                    localStorage.setItem('user', JSON.stringify(response.data.data.user));
-                    localStorage.setItem("accessToken", response.data.data.accessToken);
-                    localStorage.setItem("refreshToken", response.data.data.refreshToken);
-                    console.log('inside local', JSON.parse(localStorage['user']))
-                    history.push('/dashboard');
+                .then(response => {
+                    console.log(response.data)
+                    setLoginButtonVal(LOG_IN_BUTTON_DEFAULT_VALUE)
+                    setIsLoading(true)
+                    // go to the user's dashboard
+                    if (response.data.success) {
+                        localStorage.setItem('user', JSON.stringify(response.data.data.user));
+                        localStorage.setItem("accessToken", response.data.data.accessToken);
+                        localStorage.setItem("refreshToken", response.data.data.refreshToken);
+                        console.log('inside local', JSON.parse(localStorage['user']))
+                        history.push('/dashboard');
 
-                } else {
-                    setLoginMessage(response.data.message)
-                }
-            })
-            .catch(err => console.error(err))
+                    } else {
+                        setLoginMessage(response.data.message)
+                    }
+                })
+                .catch(err => console.error(err))
             let data = {
-                username:username,
-                password:password
+                username: username,
+                password: password
             }
             console.log(data);
         }, 2000)
@@ -76,6 +81,9 @@ function LoginForm() {
             />
             <Button type="submit" className="mb-2 login-btn">
                 {loginButtonVal}
+                <span className="loading-span" hidden={isLoading}>            
+                    <CircularProgress color="blue" size={15} thickness={6} />
+                </span>
             </Button>
             {
                 loginMessage

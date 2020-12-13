@@ -34,3 +34,11 @@
     background-color: #0f9adc!important;
     border-color:#0f9adc!important;
 }
+
+.loading-tweet-span-container {
+    text-align: center;
+}
+
+.loading-tweet-span-container .loading-tweet-span {
+    color:#08a0e9;
+}

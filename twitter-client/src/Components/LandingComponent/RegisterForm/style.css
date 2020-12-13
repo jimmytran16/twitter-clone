@@ -41,3 +41,11 @@
 .modal-body {
     /* height: 40vh; */
 }
+
+.next-btn span {
+    display: inline;
+}
+
+.next-btn .register-loading-span {
+    margin-left: 8px;
+}

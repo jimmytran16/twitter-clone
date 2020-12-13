@@ -5,6 +5,9 @@ import { Form, Container, Card, Button } from 'react-bootstrap'
 import PostComponent from './PostComponent/PostComponent'
 import axios from 'axios'
 import Config from '../../Configs'
+import clearLocalStorageData from '../../Helpers/helpers'
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 /**
  * Componenet function that represents the user's dashboard
@@ -14,6 +17,8 @@ function DashboardComponent() {
     const [posts, setPosts] = useState([]);
     const [refresh, setRefresh] = useState(false);
     const [userData, setUserData] = useState({})
+    const [hideLoading,setHideLoading] = useState(false)
+    const [loadTime,setLoadTime] = useState(1000)
 
     const history = useHistory()
 
@@ -27,18 +32,27 @@ function DashboardComponent() {
 
         // set the user data to the state from the localstorage
         setUserData(JSON.parse(localStorage['user']))
-
-        // call the api to get all of the posts
-        axios(`${Config.SERVER_URL}/home`, {
-            method: 'get',
-        })
-        .then(response => {
-            if (response.data.success) {
-                console.log(response.data.data)
-                setPosts(response.data.data.reverse())
-            }
-        })
-        .catch(err => console.error(err));
+        
+        setTimeout(() => {
+            // call the api to get all of the posts
+            axios(`${Config.SERVER_URL}/home`, {
+                method: 'get',
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+                .then(response => {
+                    console.log(response.data.data)
+                    setHideLoading(true)
+                    setLoadTime(0)
+                    if (response.data.success) {
+                        setPosts(response.data.data.reverse())
+                    }else {
+                        clearLocalStorageData()
+                    }
+                })
+                .catch(err => console.error(err));
+        },loadTime)
 
     }, [refresh])
 
@@ -46,7 +60,7 @@ function DashboardComponent() {
     const handleTweetSubmission = () => {
 
         axios({
-            method:'post',
+            method: 'post',
             url: `${Config.SERVER_URL}/home/tweet/post`,
             headers: {
                 authorization: `bearer ${localStorage.getItem('accessToken')}`
@@ -60,18 +74,12 @@ function DashboardComponent() {
         })
             .then(response => {
                 console.log(response.data)
+                // if they are unauthorized, then we will force a log out
+                if (!response.data.success && response.data.msg === 'Unauthorized!') clearLocalStorageData()
                 clearTweetFields()
                 setRefresh(!refresh)
             })
             .catch(err => console.error(err))
-    }
-
-    // func to handle the logout 
-    const handleLogout = () => {
-        delete localStorage['user'];
-        delete localStorage['accessToken']
-        delete localStorage['refreshToken']
-        history.push('/')
     }
 
     // function to clear the text area field 
@@ -84,7 +92,6 @@ function DashboardComponent() {
             <Container>
                 <div className="welcome-user-container">
                     <p>Welcome, {userData.name}</p>
-                    <Button onClick={handleLogout}>Logout</Button>
                 </div>
                 <Card style={{ marginBottom: '10px', borderRadius: 'unset' }}>
                     <Card.Body>
@@ -97,6 +104,11 @@ function DashboardComponent() {
                         </Form.Group>
                     </Card.Body>
                 </Card>
+                <div className="loading-tweet-span-container">
+                    <span className="loading-tweet-span" hidden={hideLoading}>            
+                        <CircularProgress color="inherit" size={40} thickness={6} />
+                    </span>
+                </div>
                 {
                     posts.map((post, key) => {
                         return (

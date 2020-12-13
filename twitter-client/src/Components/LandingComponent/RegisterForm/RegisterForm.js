@@ -5,6 +5,8 @@ import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import Configs from '../../../Configs'
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 // initialize the months, days ,and years for the birthday drop downs
 const months = ["January", "February", "March", "April", "May", "June",
@@ -35,6 +37,7 @@ function RegisterForm(props) {
     const [year,setYear] = useState(years[0]);
     const [phone,setPhone] = useState("");
     const [successSignUp,setSuccessSignUp] = useState(null);
+    const [isLoading,setIsLoading] = useState(true);
      
     useEffect(() => {
         setShow(props.show);
@@ -42,32 +45,36 @@ function RegisterForm(props) {
 
     const handleRegistration  = (e) => {
         console.log('registration handling')
-        axios.post(`${Configs.SERVER_URL}/signup`,{
-            name:name,
-            username:username,
-            password:password,
-            birthday:month + '-' + day + '-' + year,
-            phone:phone
-        })
-        .then(response => {
-            console.log(response.data);
-            if (response.data.success) {
-                setSuccessSignUp({
-                    msg: 'Sucessfully Signed up!',
-                    style: {
-                        color:'green'
-                    }
-                })
-            }else {
-                setSuccessSignUp({
-                    msg: 'User Already Exists!',
-                    style: {
-                        color:'red'
-                    }
-                })
-            }
-        })
-        .catch(err => console.error(err))
+        setIsLoading(false)
+        setTimeout(() => {
+            axios.post(`${Configs.SERVER_URL}/signup`,{
+                name:name,
+                username:username,
+                password:password,
+                birthday:month + '-' + day + '-' + year,
+                phone:phone
+            })
+            .then(response => {
+                console.log(response.data);
+                setIsLoading(true)
+                if (response.data.success) {
+                    setSuccessSignUp({
+                        msg: 'Sucessfully Signed up!',
+                        style: {
+                            color:'green'
+                        }
+                    })
+                }else {
+                    setSuccessSignUp({
+                        msg: 'User Already Exists!',
+                        style: {
+                            color:'red'
+                        }
+                    })
+                }
+            })
+            .catch(err => console.error(err))
+        },2000)
     }
 
     return (
@@ -135,7 +142,10 @@ function RegisterForm(props) {
                     </Form.Row>
                     <div className="sign-up-btn-container">
                         <Button className="next-btn" variant="primary" onClick={handleRegistration}>
-                            Sign Up
+                            <span >Sign Up</span>
+                            <span hidden={isLoading} className="register-loading-span">
+                                <CircularProgress color="blue" size={15} thickness={6} />
+                            </span>
                         </Button>
                         { successSignUp
                         ? (<span style={successSignUp.style}>{successSignUp.msg}</span>)

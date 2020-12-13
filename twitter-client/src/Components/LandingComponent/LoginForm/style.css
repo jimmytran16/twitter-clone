@@ -10,6 +10,14 @@
     background-color: #d0e9f5d3!important;
 }
 
+.login-btn:focus{
+    background-color:unset;
+}
+
+.loading-span {
+    margin:10px;
+}
+
 .login-form {
     padding: 10px;
     display: flex;

@@ -1,0 +1,25 @@
+.reply-button-container {
+    margin:8px 0px;
+}
+
+.reply-button-container button {
+    float: right;
+    background-color:#08a0e9!important;
+    font-weight: bolder;
+    border-radius: 45px;
+    border: 1px #08a0e9 solid;
+}
+
+.comment-text-area , .comment-text-area:focus {
+    border:unset;
+}
+
+.comment-reply-container {
+    display: flex;
+}
+
+.commenter-profile-pic {
+    border-radius: 45px;
+    margin: 0px 2px;
+}
+

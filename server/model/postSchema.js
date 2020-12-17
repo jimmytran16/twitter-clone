@@ -7,7 +7,8 @@ var postSchema = new mongoose.Schema({
     tweet : { type:String, required:true },
     date : { type:String, required:true },
     retweets : { type:Number, required:false, default:0 },
-    likes : { type:Number, required:false, default:0 }
+    likes : { type:Number, required:false, default:0 },
+    comments : { type:Number, required:false, default:0 }
 })
 
 var Post = mongoose.model('Post',postSchema);

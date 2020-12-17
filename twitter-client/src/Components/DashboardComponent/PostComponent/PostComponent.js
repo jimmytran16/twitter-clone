@@ -1,4 +1,4 @@
-import React from 'react'
+import React , { useState } from 'react'
 import './style.css'
 import { faComment, faRecycle, faHeart, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +8,7 @@ import moment from 'moment'
 import axios from 'axios'
 import Config from '../../../Configs'
 import clearLocalStorageData from '../../../Helpers/helpers'
+import CommentComponent from '../CommentComponent/CommentComponent'
 
 // set axios requests to include cookie 
 // axios.defaults.withCredentials = true;
@@ -23,6 +24,7 @@ import clearLocalStorageData from '../../../Helpers/helpers'
  */
 
 function PostComponent(props) {
+    const [showCommentForm, setShowCommentForm] = useState(false)
 
     // func to handle the interactions (COMMENT,RETWEET,LIKES,LINK OFFS)
     const handleInteraction = (e) => {
@@ -53,8 +55,13 @@ function PostComponent(props) {
 
     }
 
+    const handleComment = (e) => {
+        
+    }
+
     return (
         <Card style={{ borderRadius: 'unset' }}>
+            <CommentComponent post={props.post} show={showCommentForm} />
             <Card.Body>
                 <Row>
                     <Col xs={2} sm={2} md={2}>
@@ -70,8 +77,8 @@ function PostComponent(props) {
                             </p>
                             <footer className="blockquote-footer">
                                 <div className="post-icons-container">
-                                    <div id='COMMENT' >
-                                        <FontAwesomeIcon onClick={handleInteraction} className="fComment" icon={faComment} id='COMMENT' /> <span className="comment-span">0</span>
+                                    <div id='COMMENT' onClick={() => setShowCommentForm(!showCommentForm) }>
+                                        <FontAwesomeIcon onClick={handleComment} className="fComment" icon={faComment} id='COMMENT' /> <span className="comment-span">{props.post.comments}</span>
                                     </div>
                                     <div id='RETWEET'>
                                         <FontAwesomeIcon onClick={handleInteraction} className="fRecycle" icon={faRecycle} id="RETWEETS" /> <span className="retweet-span">{props.post.retweets}</span>

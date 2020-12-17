@@ -18,7 +18,7 @@ function DashboardComponent() {
     const [refresh, setRefresh] = useState(false);
     const [userData, setUserData] = useState({})
     const [hideLoading,setHideLoading] = useState(false)
-    const [loadTime,setLoadTime] = useState(1000)
+    const [loadTime,setLoadTime] = useState(800)
 
     const history = useHistory()
 

@@ -51,7 +51,8 @@ export default function CommentComponent(props) {
                     id:props.post._id,
                     reply:reply,
                     userId: JSON.parse(localStorage.getItem('user'))._id,
-                    username: JSON.parse(localStorage.getItem('user')).username
+                    username: JSON.parse(localStorage.getItem('user')).username,
+                    replyTo: props.post.username
                 }
             })
             .then(response => {
@@ -80,7 +81,7 @@ export default function CommentComponent(props) {
                                 <img  src={verticalImage} height="40px" width="40px" />
                             </div>
                             <div style={{margin:'0px 12px'}}>
-                                <div className="user-name-container" style={{ display: "flex", fontSize:'12px' }}> <p style={{ margin:'unset'}}>{props.post.name}</p> <span>@{props.post.username} • {moment(props.post.date.split('T')[0]).fromNow()} </span> </div>
+                                <div className="user-name-container" style={{ display: "flex", fontSize:'12px' }}> <p style={{ margin:'unset', paddingRight:'5px', fontWeight:'bolder'}}>{props.post.name}</p> <span>@{props.post.username} • {moment(props.post.date.split('T')[0]).fromNow()} </span> </div>
                                 <p style={{wordBreak:'break-word'}}>{props.post.tweet}</p>
                             </div>
                         </div>

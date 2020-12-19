@@ -1,4 +1,4 @@
-import React , { useState } from 'react'
+import React, { useState } from 'react'
 import './style.css'
 import { faComment, faRecycle, faHeart, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,7 +8,9 @@ import moment from 'moment'
 import axios from 'axios'
 import Config from '../../../Configs'
 import clearLocalStorageData from '../../../Helpers/helpers'
-import CommentComponent from '../CommentComponent/CommentComponent'
+import CommentComponent from '../CommentFormComponent/CommentComponent'
+import { useHistory } from "react-router-dom";
+
 
 // set axios requests to include cookie 
 // axios.defaults.withCredentials = true;
@@ -25,6 +27,7 @@ import CommentComponent from '../CommentComponent/CommentComponent'
 
 function PostComponent(props) {
     const [showCommentForm, setShowCommentForm] = useState(false)
+    const history = useHistory()
 
     // func to handle the interactions (COMMENT,RETWEET,LIKES,LINK OFFS)
     const handleInteraction = (e) => {
@@ -45,58 +48,61 @@ function PostComponent(props) {
                 id: props.post._id, action: e.currentTarget.id
             },
         })
-        .then(response => {
-            console.log(response.data)
-            
-            if (!response.data.success && response.data.msg === 'Unauthorized!') clearLocalStorageData()
-            props.setRefresh(!props.refresh)
-        })
-        .catch(err => console.error(err));
+            .then(response => {
+                console.log(response.data)
+
+                if (!response.data.success && response.data.msg === 'Unauthorized!') clearLocalStorageData()
+                props.setRefresh(!props.refresh)
+            })
+            .catch(err => console.error(err));
 
     }
 
     const handleComment = (e) => {
-        
+
+    }
+
+    const goToThread = () => {
+        history.push(`/thread/${props.post._id}`)
     }
 
     return (
-        <Card style={{ borderRadius: 'unset' }}>
-            <CommentComponent post={props.post} show={showCommentForm} />
-            <Card.Body>
-                <Row>
-                    <Col xs={2} sm={2} md={2}>
-                        <div>
-                            <img className="user-profile-tweet-image" src={avatarImage} alt="user-img" />
-                        </div>
-                    </Col>
-                    <Col xs={10} sm={10} md={10}>
-                        <blockquote className="blockquote mb-0">
-                            <div className="user-name-container"> <p>{props.post.name}</p> <span>@{props.post.username} • {moment(props.post.date.split('T')[0]).fromNow()} </span> </div>
-                            <p>
-                                {props.post.tweet}
-                            </p>
-                            <footer className="blockquote-footer">
-                                <div className="post-icons-container">
-                                    <div id='COMMENT' onClick={() => setShowCommentForm(!showCommentForm) }>
-                                        <FontAwesomeIcon onClick={handleComment} className="fComment" icon={faComment} id='COMMENT' /> <span className="comment-span">{props.post.comments}</span>
+            <Card className="post-component-card-container" style={{ borderRadius: 'unset' }}>
+                <CommentComponent post={props.post} show={showCommentForm} />
+                <Card.Body>
+                    <Row>
+                        <Col xs={2} sm={2} md={2}>
+                            <div>
+                                <img className="user-profile-tweet-image" src={avatarImage} alt="user-img" />
+                            </div>
+                        </Col>
+                        <Col xs={10} sm={10} md={10}>
+                            <blockquote className="blockquote mb-0">
+                                <div className="user-name-container"> <p>{props.post.name}</p> <span>@{props.post.username} • {moment(props.post.date.split('T')[0]).fromNow()} </span> </div>
+                                <p>
+                                    {props.post.tweet}
+                                </p>
+                                <footer className="blockquote-footer">
+                                    <div className="post-icons-container">
+                                        <div id='COMMENT' onClick={() => setShowCommentForm(!showCommentForm)} >
+                                            <FontAwesomeIcon onClick={handleComment} className="fComment" icon={faComment} id='COMMENT' /> <span className="comment-span">{props.post.comments}</span>
+                                        </div>
+                                        <div id='RETWEET'>
+                                            <FontAwesomeIcon onClick={handleInteraction} className="fRecycle" icon={faRecycle} id="RETWEETS" /> <span className="retweet-span">{props.post.retweets}</span>
+                                        </div>
+                                        <div id='LIKE'>
+                                            <FontAwesomeIcon onClick={handleInteraction} className="fHeart" icon={faHeart} id="LIKES" /><span className="like-span">{props.post.likes}</span>
+                                        </div>
+                                        <div id='LINKOFF'>
+                                            <FontAwesomeIcon onClick={goToThread} className="fExternal" icon={faExternalLinkAlt} id="LINKOFF" /> <span className="linkoff-span" ></span>
+                                        </div>
                                     </div>
-                                    <div id='RETWEET'>
-                                        <FontAwesomeIcon onClick={handleInteraction} className="fRecycle" icon={faRecycle} id="RETWEETS" /> <span className="retweet-span">{props.post.retweets}</span>
-                                    </div>
-                                    <div id='LIKE'>
-                                        <FontAwesomeIcon onClick={handleInteraction} className="fHeart" icon={faHeart} id="LIKES" /><span className="like-span">{props.post.likes}</span>
-                                    </div>
-                                    <div id='LINKOFF'>
-                                        <FontAwesomeIcon onClick={handleInteraction} className="fExternal" icon={faExternalLinkAlt} id="LINKOFF" /> <span className="linkoff-span" >0</span>
-                                    </div>
-                                </div>
-                            </footer>
-                        </blockquote>
-                    </Col>
-                </Row>
-
-            </Card.Body>
-        </Card>
+                                </footer>
+                            </blockquote>
+                        </Col>
+                    </Row>
+                </Card.Body>
+            </Card>
     )
 }
 

@@ -17,7 +17,8 @@ post_id : {
 
 var commentSchema = new mongoose.Schema({
     postId : { type:String, required:true },
-    comments : { type:Array, required:true }
+    comments : { type:Array, required:true },
+    replyTo: { type:String, required:true }
 })
 
 var Comment = mongoose.model('Comment',commentSchema);

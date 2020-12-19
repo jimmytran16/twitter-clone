@@ -42,3 +42,12 @@
 .loading-tweet-span-container .loading-tweet-span {
     color:#08a0e9;
 }
+
+
+@media screen and (max-width:768px) {
+    .dashboard-container {
+        max-width: unset!important;
+        padding-left: 0px!important;
+        padding-right: 0px!important;
+    }
+}

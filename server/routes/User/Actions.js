@@ -43,9 +43,8 @@ const updatePostInteraction = (REQUEST_BODY, cb) => {
                 reply: REQUEST_BODY.reply,
                 userId: REQUEST_BODY.userId,
                 username: REQUEST_BODY.username,
-                date: new Date()
+                date: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })
             }
-
             break;
         case 'LINKOFF':
             INTERACTION_TYPE = { $inc: { likes: 1 } }
@@ -57,13 +56,13 @@ const updatePostInteraction = (REQUEST_BODY, cb) => {
     // update the post 
     Post.findOneAndUpdate({ _id: POST_ID }, INTERACTION_TYPE, (err, response) => {
         if (err) {
-            cb(err, null);
+            return cb(err, null);
         }
         else {
             if (REQUEST_BODY.action === 'COMMENT') {
                 // save the commment onto the database
-                if (!addCommentToPost(COMMENT_BODY,POST_ID)) {
-                    cb(null,'comment not saved successfully!')
+                if (!addCommentToPost(COMMENT_BODY,POST_ID,REQUEST_BODY.replyTo)) {
+                    return cb(null,'comment not saved successfully!')
                 }
             }
             return cb(null, 'successfully updated!');
@@ -74,18 +73,14 @@ const updatePostInteraction = (REQUEST_BODY, cb) => {
 // function to get all of the posts of that user and returns a callback
 const getUsersPost = (USER_ID, cb) => {
     Post.find({ userid: USER_ID }, (err, posts) => {
-        if (err) return cb(err, null);
-        else return cb(null, posts);
+        return err ? cb(err,null) : cb(null,posts)
     })
 }
 
 // function to get all posts of all users and return a callbacl
 const getAllPosts = (cb) => {
-    Post.find({}, (err, posts) => {
-        if (err)
-            return cb(err, null);
-        else
-            return cb(null, posts);
+    Post.find({}, (err, posts) => { 
+        return err ? cb(err,null) : cb(null,posts)
     })
 }
 
@@ -94,7 +89,7 @@ const getAllPosts = (cb) => {
  * @param {Object} COMMENT - an object that contains the data of the comment
  * @param {String} postId - the idea of a specfic post
  */
-function addCommentToPost(COMMENT, postId) {
+function addCommentToPost(COMMENT, postId, replyToUser) {
     console.log(COMMENT)
     // check to see if the user post exist in comment collection
     Comment.findOne({postId:postId} , (err,post) => {
@@ -105,26 +100,31 @@ function addCommentToPost(COMMENT, postId) {
         if (!post) { // create the new comment schema, and update the post
             let NEW_COMMENT = new Comment({
                 postId:postId,
-                comments:[COMMENT]
+                comments:[COMMENT],
+                replyTo:replyToUser
             })
             NEW_COMMENT.save((err,data) => {
-                if (err) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+                return err ? false : true;
             })
         }else { // update the existing post, pushing the reply to the comments array
             Comment.updateOne({postId:postId},{$push:{comments:COMMENT}}, (err,success) =>{
-                if (err) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+               return err ? false : true;
             })
         }
+    })
+}
+
+//  function to get the user's thread with comments
+function getUserThreadAndComments(postId, cb) {
+    let thread = {}
+    // query to get the specfic post
+    Post.findOne({_id:postId} , (err,post) => {
+        thread['post'] = post
+        if (err) return cb('Error retrieving post', null);
+        Comment.findOne({postId:postId} , (err,data) => {
+            thread['comments'] = data
+            return err ? cb('Error retrieving comments', null) : cb(null, thread)
+        })
     })
 }
 
@@ -132,5 +132,6 @@ module.exports = {
     postTheTweet: postTheTweet,
     updatePostInteraction: updatePostInteraction,
     getUsersPost: getUsersPost,
-    getAllPosts: getAllPosts
+    getAllPosts: getAllPosts,
+    getUserThreadAndComments:getUserThreadAndComments
 }

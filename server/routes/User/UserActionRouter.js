@@ -1,8 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const Post = require('../../model/postSchema')
 const jwt = require('jsonwebtoken')
-const { postTheTweet, updatePostInteraction, getUsersPost, getAllPosts } = require('./Actions')
+const { postTheTweet, updatePostInteraction, getUsersPost, getAllPosts, getUserThreadAndComments } = require('./Actions')
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 
@@ -71,6 +70,24 @@ router.post('/interaction', authenticateUser, (req,res) => {
         }else {
             res.json({
                 message:result,
+                success:true
+            })
+        }
+    })
+})
+
+//endpoint for getting specific tweet for thread
+// pass back post data and comments of that tweet
+router.get('/thread/:id' , (req,res) => {
+    getUserThreadAndComments(req.params.id , (err,data) =>{
+        if (err) {
+            res.json({
+                message:err,
+                success:false
+            })
+        }else {
+            res.json({
+                message:data,
                 success:true
             })
         }

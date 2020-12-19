@@ -19,6 +19,7 @@ function DashboardComponent() {
     const [userData, setUserData] = useState({})
     const [hideLoading,setHideLoading] = useState(false)
     const [loadTime,setLoadTime] = useState(800)
+    const [disableTweetBtn, setDisableTweetBtn] = useState(true)
 
     const history = useHistory()
 
@@ -82,6 +83,12 @@ function DashboardComponent() {
             .catch(err => console.error(err))
     }
 
+    // function to store the tweet input into state
+    const updateTweetInput = (e) => {
+        setTweet(e.target.value)
+        setDisableTweetBtn( (e.target.value === '') ? true : false)
+    }
+
     // function to clear the text area field 
     const clearTweetFields = () => {
         document.getElementsByClassName('tweet-text-area')[0].value = ''
@@ -89,17 +96,17 @@ function DashboardComponent() {
 
     return (
         <>
-            <Container>
+            <Container className="dashboard-container">
                 <div className="welcome-user-container">
                     <p>Welcome, {userData.name}</p>
                 </div>
                 <Card style={{ marginBottom: '10px', borderRadius: 'unset' }}>
                     <Card.Body>
                         <Form.Group controlId="exampleForm.ControlTextarea1">
-                            <Form.Control className="tweet-text-area" onChange={(e) => setTweet(e.target.value)} style={{ border: 'unset' }} as="textarea" rows={3} placeholder="What's happening?" ></Form.Control>
+                            <Form.Control className="tweet-text-area" onChange={updateTweetInput} style={{ border: 'unset' }} as="textarea" rows={3} placeholder="What's happening?" ></Form.Control>
                             <hr />
                             <div className="tweet-btn-container">
-                                <Button onClick={handleTweetSubmission} >Tweet</Button>
+                                <Button disabled={disableTweetBtn} onClick={handleTweetSubmission} >Tweet</Button>
                             </div>
                         </Form.Group>
                     </Card.Body>

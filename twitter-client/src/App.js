@@ -15,9 +15,12 @@ import {
 } from "react-router-dom";
 import './App.css'
 
+import ThreadComponent from './Components/ThreadComponent/ThreadComponent'
+
+//  Nav component for authenticarted users ONLY
 const NAV_COMPONENT = () => {
   return (
-    <Nav hidden={false} variant="tabs" defaultActiveKey="/home">
+    <Nav style={{padding:'5px 0px'}} hidden={false} variant="tabs" defaultActiveKey="/home">
           <Nav.Item>
             <Nav.Link style={linkStyle} as={Link} to="/">
               <FontAwesomeIcon icon={faHome} /> Home
@@ -61,6 +64,7 @@ function App() {
           <NAV_COMPONENT />
             <Dashboard />
           </Route>
+          <Route path="/thread/:id" component={ThreadComponent}/>
           <Route path="/" component={LandingComponent} />
         </Switch>
       </Router>

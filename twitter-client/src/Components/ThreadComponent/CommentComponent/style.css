@@ -1,0 +1,30 @@
+.comment-user-name-container {
+    margin: 5px 5px;
+}
+
+
+.comment-profile-container {
+    display: flex;
+}
+
+.comment-content-container {
+    margin: 0px 28px;
+}
+
+.comment-content-container p {
+    display: block;
+    margin: unset;
+}
+
+.comment-content-container .tweet-reply {
+    font-weight: bolder;
+}
+
+.comment-content-container .tweet-reply-name {
+    font-size: 16px;
+    font-weight: bolder;
+}
+
+.comment-content-container .tweet-reply-username {
+    font-size: 15px;
+}

@@ -35,3 +35,15 @@
     text-align: center;
     margin-top: 50px;
 }
+
+.loading-tweet-span-container {
+    margin: 10px 0px;
+}
+
+@media screen and (max-width:768px) {
+    .user-profile-container {
+        max-width: unset!important;
+        padding-left: 0px!important;
+        padding-right: 0px!important;
+    }
+}

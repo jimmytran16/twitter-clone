@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './style.css'
 import PostComponent from '../DashboardComponent/PostComponent/PostComponent'
 import { Container, Nav, Card, Button, Row, Col } from 'react-bootstrap'
+import CircularProgress from '@material-ui/core/CircularProgress';
 import avatarImg from '../../avatar.png'
 import Axios from 'axios'
 import { useHistory } from 'react-router-dom'
@@ -39,6 +40,7 @@ function ProfileComponent() {
     const [likesBtnStyling, setLikesBtnStyling] = useState(navLinkDefaultStyling)
     const [userData, setUserData] = useState({})
     const [userPost, setUsersPost] = useState([])
+    const [hideLoading, setHideLoading] = useState(true)
 
     const history = useHistory()
 
@@ -52,16 +54,21 @@ function ProfileComponent() {
         setTweetsBtnStyling(navLinkDefaultStyling);
         let USER_DATA = JSON.parse(localStorage['user']);
         setUserData(USER_DATA);
-
-        // call api to get all of the posts of that user
-        Axios(`${Config.SERVER_URL}/home/profile?userid=${USER_DATA._id}`,{
-            method:'get',
-            headers: {
-                authorization: `Bearer ${localStorage.getItem('accessToken')}`
-            },
-        })
-        .then(response => setUsersPost(response.data.data.reverse()))
-        .catch(err => console.error(err));
+        setHideLoading(false)
+        setTimeout(() =>{
+            // call api to get all of the posts of that user
+            Axios(`${Config.SERVER_URL}/home/profile?userid=${USER_DATA._id}`,{
+                method:'get',
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                },
+            })
+            .then(response =>{
+                setUsersPost(response.data.data.reverse())
+                setHideLoading(true)
+            })
+            .catch(err => console.error(err));
+        },500)
 
     }, [])
 
@@ -101,13 +108,22 @@ function ProfileComponent() {
     }
     
     // JSX that represents content of when user has no tweets yet
-    const noTweetYetContent = (<div className="no-tweet-yet-container">
+    const noTweetYetContent = (
+<>
+<div className="loading-tweet-span-container">
+        <span className="loading-tweet-span" hidden={hideLoading}>            
+            <CircularProgress color="inherit" size={40} thickness={6} />
+        </span>
+    </div>
+    <div className="no-tweet-yet-container">
         <h5>You haven't tweeted yet</h5>
         <p>When you post a tweet, it'll show up here.</p>
-    </div>)
+    </div>
+</>
+    )
 
     return (
-        <Container>
+        <Container className="user-profile-container">
             <Card className="text-center">
                 <Card.Body style={cardBodyStyleHeader}>
                 </Card.Body>
@@ -124,8 +140,8 @@ function ProfileComponent() {
                                 <Col md={12}>
                                     <p className="user-username">@{userData.username}</p>
                                     <div className="follow-details-container">
-                                        <p><strong>440</strong> Following</p>
-                                        <p><strong>200</strong> Follwers</p>
+                                        <p><strong>0</strong> Following</p>
+                                        <p><strong>0</strong> Follwers</p>
                                     </div>
                                 </Col>
                             </Row>

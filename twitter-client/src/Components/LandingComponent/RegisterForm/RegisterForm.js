@@ -38,13 +38,18 @@ function RegisterForm(props) {
     const [phone,setPhone] = useState("");
     const [successSignUp,setSuccessSignUp] = useState(null);
     const [isLoading,setIsLoading] = useState(true);
+    const [message,setMessage] = useState(null)
      
     useEffect(() => {
         setShow(props.show);
     }, [props.show])
 
     const handleRegistration  = (e) => {
-        console.log('registration handling')
+        if (!username || !password || !name || !phone ) { 
+            setMessage("Please fill out everything on the form!")
+        }
+        else {
+        setMessage(null)
         setIsLoading(false)
         setTimeout(() => {
             axios.post(`${Configs.SERVER_URL}/signup`,{
@@ -75,6 +80,7 @@ function RegisterForm(props) {
             })
             .catch(err => console.error(err))
         },2000)
+        }
     }
 
     return (
@@ -150,6 +156,12 @@ function RegisterForm(props) {
                         { successSignUp
                         ? (<span style={successSignUp.style}>{successSignUp.msg}</span>)
                         : (<span></span>)
+                        }
+
+                        {
+                          message
+                          ? (<span style={{color:'red'}}>{message}</span>)
+                          : (<span></span>)
                         }
                     </div>
                 </Form>

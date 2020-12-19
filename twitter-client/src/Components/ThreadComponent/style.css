@@ -1,0 +1,19 @@
+.go-back-to-tweet-container {
+    margin-top: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.tweet-text-p {
+    margin: 0px 20px;
+    padding: unset;
+    font-weight: bolder;
+}
+
+.go-back-to-tweet-icon:hover{
+    background-color: #08a0e94f;
+    border-radius: 25px;
+    color:#08a0e9;
+}

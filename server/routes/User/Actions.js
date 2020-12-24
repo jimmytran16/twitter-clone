@@ -1,5 +1,8 @@
 const Post = require('../../model/postSchema')
 const Comment = require('../../model/commentSchema')
+const Likes = require('../../model/likesSchema')
+const { post } = require('./UserActionRouter')
+const mongoose = require('mongoose')
 
 // function to post the tweet, and will return a callback
 const postTheTweet = (TWEET_INFO, cb) => {
@@ -21,8 +24,7 @@ const postTheTweet = (TWEET_INFO, cb) => {
 const updatePostInteraction = (REQUEST_BODY, cb) => {
     // check if the the body's data contains all data
     if (!REQUEST_BODY || !REQUEST_BODY.action || !REQUEST_BODY.id) {
-        cb('id and action required in request body!', null);
-        return;
+       return cb('id and action required in request body!', null);
     }
 
     var COMMENT_BODY;
@@ -53,21 +55,44 @@ const updatePostInteraction = (REQUEST_BODY, cb) => {
             cb('ACTION INVALID', null);
             return;
     }
-    // update the post 
-    Post.findOneAndUpdate({ _id: POST_ID }, INTERACTION_TYPE, (err, response) => {
-        if (err) {
-            return cb(err, null);
-        }
-        else {
-            if (REQUEST_BODY.action === 'COMMENT') {
-                // save the commment onto the database
-                if (!addCommentToPost(COMMENT_BODY,POST_ID,REQUEST_BODY.replyTo)) {
-                    return cb(null,'comment not saved successfully!')
-                }
+    // check if the action is LIKES
+    if (REQUEST_BODY.action === 'LIKES') {
+        // check if the user already liked the post!
+        checkIfUserLikedPostAlready(REQUEST_BODY.userId, REQUEST_BODY.id , (err,result) => {
+            if (err) {
+                return cb(err,null);
             }
-            return cb(null, 'successfully updated!');
-        }
-    })
+            if (result) {
+                return cb(null, 'Already exist!');
+            }else {
+                Post.findOneAndUpdate({ _id: POST_ID }, INTERACTION_TYPE, (err, response) => {
+                    updateUserLikes(REQUEST_BODY.userId,REQUEST_BODY.id, (err,result) => {
+                        if(err) return cb(null,'likes not updated for user!');
+                        return cb(null, 'Sucessfully updated likes for user!')
+                    })
+                })
+            }
+        })
+    }
+    // other than LIKES
+    else {
+        // update the post 
+        Post.findOneAndUpdate({ _id: POST_ID }, INTERACTION_TYPE, (err, response) => {
+            if (err) {
+                return cb(err, null);
+            }
+            else {
+                if (REQUEST_BODY.action === 'COMMENT') {
+                    // save the commment onto the database
+                    if (!addCommentToPost(COMMENT_BODY,POST_ID,REQUEST_BODY.replyTo)) {
+                        return cb(null,'comment not saved successfully!')
+                    }
+                }
+                return cb(null, 'successfully updated!');
+            }
+        })
+    }
+    
 }
 
 // function to get all of the posts of that user and returns a callback
@@ -84,10 +109,23 @@ const getAllPosts = (cb) => {
     })
 }
 
+function checkIfUserLikedPostAlready(userId,postId,callb) {
+    // get all the likes from the user
+    Likes.findOne({userId:userId}, (err,likes) => {
+        if (err) return callb(err,null);
+        if (!likes) return callb(null,false);
+        if (likes.likes.includes(postId)) {
+            return callb(null,true);
+        }else {
+            return callb(null,false);
+        }
+    })
+}
+
 // function to add the comment to the post
 /**
  * @param {Object} COMMENT - an object that contains the data of the comment
- * @param {String} postId - the idea of a specfic post
+ * @param {String} postId - the ID of a specfic post
  */
 function addCommentToPost(COMMENT, postId, replyToUser) {
     console.log(COMMENT)
@@ -114,6 +152,36 @@ function addCommentToPost(COMMENT, postId, replyToUser) {
     })
 }
 
+// function to add the new likes to the collection for that user
+/**
+ * This function will update the user's likes
+ * @param {String} postId - the ID of a specfic post
+ * @param {String} userId - the ID of a specfic user
+ * @param {Function} cb - a callback function 
+ */
+function updateUserLikes(userId, postId, cb) {
+    console.log(userId, postId)
+    // check to see if the user post exist in comment collection
+    Likes.findOne({userId:userId} , (err,like) => {
+        if (err) {
+            return cb(err,null);
+        }
+        if (!like) { // create the new comment schema, and update the likes
+            let NEW_LIKES = new Likes({
+                userId:userId,
+                likes: [postId]
+            })
+            NEW_LIKES.save((err,data) => {
+                return err ? cb(err,null) : cb(null,true)
+            })
+        }else { // update the existing post, pushing the new post to the user's likes array
+            Likes.updateOne({userId:userId},{$push:{likes:postId}}, (err,success) =>{
+                 return err ? cb(err,null) : cb(null,success)
+            })
+        }
+    })
+}
+
 //  function to get the user's thread with comments
 function getUserThreadAndComments(postId, cb) {
     let thread = {}
@@ -128,10 +196,39 @@ function getUserThreadAndComments(postId, cb) {
     })
 }
 
+// function to get all of the user's liked post ids
+function getPostIdsOfUsersLikes(userId, cb) {
+    // get all the likes from the user
+    Likes.findOne({userId:userId}, (err,likes) => {
+        console.log(likes)
+        if (err) return cb(err,null);
+        if (!likes) return cb(null,[]);
+        else {
+            let likes_arr = convertToMongooseObjectIdsArray(likes.likes)
+            
+            Post.find({_id:{$in:likes_arr}}, (err,posts) => {
+                if (err) return cb(err,null);
+                else {
+                    return cb(null,posts)
+                }
+            })
+        }
+    })
+}
+
+// convert the array of strings to mongoose object ID types
+function convertToMongooseObjectIdsArray(string_arrs) {
+    for(var index in string_arrs) {
+        string_arrs[index] = mongoose.Types.ObjectId(string_arrs[index])
+    }
+    return string_arrs;
+}
+
 module.exports = {
     postTheTweet: postTheTweet,
     updatePostInteraction: updatePostInteraction,
     getUsersPost: getUsersPost,
     getAllPosts: getAllPosts,
-    getUserThreadAndComments:getUserThreadAndComments
+    getUserThreadAndComments:getUserThreadAndComments,
+    getPostIdsOfUsersLikes:getPostIdsOfUsersLikes
 }

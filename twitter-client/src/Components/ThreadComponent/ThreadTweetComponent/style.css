@@ -18,3 +18,8 @@
 .thread-interaction-container p {
     margin-right:5px;
 }
+
+.loading-comment-container {
+    text-align: center;
+    margin: 10px;
+}

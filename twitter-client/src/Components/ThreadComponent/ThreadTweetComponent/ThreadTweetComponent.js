@@ -3,6 +3,7 @@ import './style.css'
 import { faComment, faRecycle, faHeart, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CommentComponent from '../CommentComponent/CommentComponent'
+import CircularProgress from '@material-ui/core/CircularProgress';
 import avatarImage from '../../../avatar.png'
 import { Card } from 'react-bootstrap'
 import moment from 'moment'
@@ -11,24 +12,27 @@ import axios from 'axios'
 
 
 export default function ThreadTweetComponent(props) {
-    {
         const [showCommentForm, setShowCommentForm] = useState(false)
         const [postDetail, setPostDetail] = useState({})
         const [threadComments, setThreadComments] = useState([])
+        const [hideLoading, setHideLoading] = useState(false)
 
         useEffect(() => {
-            axios({
-                url: `${Configs.SERVER_URL}/home/thread/${props.post}`,
-                method: 'get',
-            })
-                .then(response => {
-                    if (response.data.success) {
-                        setPostDetail(response.data.message.post)
-                        setThreadComments(response.data.message.comments.comments)
-                        console.log(response.data.message.comments)
-                    }
+            setTimeout(() => {
+                axios({
+                    url: `${Configs.SERVER_URL}/home/thread/${props.postId}`,
+                    method: 'get',
                 })
-                .catch(err => console.error(err))
+                    .then(response => {
+                        if (response.data.success) {
+                            setPostDetail(response.data.message.post)
+                            setThreadComments(response.data.message.comments.comments)
+                            setHideLoading(true)
+                            console.log(response.data.message.comments)
+                        }
+                    })
+                    .catch(err => console.error(err))
+            },500)
         }, [])
         const handleComment = () => {
 
@@ -93,6 +97,11 @@ export default function ThreadTweetComponent(props) {
                         </blockquote>
                     </Card.Body>
                 </Card>
+                <div className="loading-comment-container" hidden={hideLoading}>
+                    <span className="loading-comment-span">            
+                        <CircularProgress style={{color:'#08a0e9'}} size={40} thickness={6} />
+                    </span>
+                </div>
                 {
                     threadComments.map((comment,key) => {
                         return (
@@ -104,4 +113,3 @@ export default function ThreadTweetComponent(props) {
 
         )
     }
-}

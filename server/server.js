@@ -21,7 +21,12 @@ app.use(cors({
   credentials:true
 }))
 app.use(morgan('dev'))
-app.use((req,res,next) => { console.log(req.body); next(); })
+app.use((req,res,next) => {
+  if (req.method === 'POST') {
+    console.log(req.body)
+  }
+  next()
+})
 
 // routers
 app.use('/', MainRouter);

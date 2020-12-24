@@ -17,10 +17,10 @@ export default function ThreadComponent(props) {
             <Container>
                 {/* <h1>{props.match.params.id}</h1> */}
                 <div className="go-back-to-tweet-container">
-                    <FontAwesomeIcon onClick={() => history.push('/dashboard')} className="go-back-to-tweet-icon" color="rgb(8, 160, 233)" icon={faArrowLeft} />
+                    <FontAwesomeIcon onClick={() => history.push('/dashboard')} className="go-back-to-tweet-icon" color="rgb(8, 160, 233)" size="lg" icon={faArrowLeft} />
                     <p className="tweet-text-p">Tweet</p>
                 </div>
-                <ThreadTweetComponent post={props.match.params.id} />
+                <ThreadTweetComponent postId={props.match.params.id} />
             </Container>
         </>
     )

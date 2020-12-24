@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
-const { postTheTweet, updatePostInteraction, getUsersPost, getAllPosts, getUserThreadAndComments } = require('./Actions')
+const { postTheTweet, updatePostInteraction, getUsersPost, getAllPosts, getUserThreadAndComments, getPostIdsOfUsersLikes } = require('./Actions')
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 
@@ -25,7 +25,7 @@ router.get('/', authenticateUser, (req,res) => {
 // endpoint to get the specific user's post 
 router.get('/profile',authenticateUser, (req,res) => {
     //  get user's post based on ID
-    getUsersPost(req.query.userid, (err, result) => {
+    getUsersPost(req.query.userid, (err, data) => {
         if (err) {
             res.json({
                 data:err,
@@ -33,12 +33,29 @@ router.get('/profile',authenticateUser, (req,res) => {
             })
         }else{
             res.json({
-                data:result,
+                data:data,
                 success:true
             })
         }
     })
     
+})
+
+router.get('/get-all-liked-tweets/:userId', authenticateUser, (req,res) => {
+    getPostIdsOfUsersLikes(req.params.userId, (err, data) => {
+        if (err) {
+            res.json({
+                message: err,
+                success:false
+            })
+        }
+        else {
+            res.json({
+                message:data,
+                success:true
+            })
+        }
+    })
 })
 
 // endpoint for the user to tweet
@@ -64,7 +81,7 @@ router.post('/interaction', authenticateUser, (req,res) => {
     updatePostInteraction(req.body, (err,result) => {
         if (err) {
             res.json({
-                message:result,
+                message:err,
                 success:false
             })
         }else {

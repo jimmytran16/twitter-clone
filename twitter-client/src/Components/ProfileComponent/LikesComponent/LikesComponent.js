@@ -8,6 +8,8 @@ import PostComponent from '../../DashboardComponent/PostComponent/PostComponent'
 export default function LikesComponent() {
     const [hideLoading, setHideLoading] = useState(false)
     const [likedTweets, setLikedTweets] = useState([])
+    const [refresh, setRefresh] = useState(false);
+
     // retrieve the tweets that the user liked
     useEffect(() => {
         setTimeout(() => {
@@ -18,12 +20,12 @@ export default function LikesComponent() {
             })
                 .then(response => {
                     console.log(response.data.message)
-                    setLikedTweets(response.data.message);
+                    setLikedTweets(response.data.message.reverse());
                     setHideLoading(true)
                 })
                 .catch(err => console.error(err));
         }, 500)
-    }, [])
+    }, [refresh])
     return (
         <>
             <div className="loading-tweet-span-container" hidden={hideLoading}>
@@ -35,7 +37,7 @@ export default function LikesComponent() {
                 (likedTweets.length > 0)
                     ? likedTweets.map((tweet, key) => {
                         return (
-                            <PostComponent key={key} post={tweet} style={{ color: '#da6666' }} />
+                            <PostComponent refresh={refresh} setRefresh={setRefresh} key={key} post={tweet} style={{ color: '#da6666' }} />
                         )
                     })
                     : <div style={{textAlign:'center'}}><p>You haven't liked any posts yet!</p></div>

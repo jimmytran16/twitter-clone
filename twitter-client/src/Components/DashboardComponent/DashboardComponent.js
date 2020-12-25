@@ -5,7 +5,7 @@ import { Form, Container, Card, Button } from 'react-bootstrap'
 import PostComponent from './PostComponent/PostComponent'
 import axios from 'axios'
 import Config from '../../Configs'
-import clearLocalStorageData from '../../Helpers/helpers'
+import { clearLocalStorageData } from '../../Helpers/helpers'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 

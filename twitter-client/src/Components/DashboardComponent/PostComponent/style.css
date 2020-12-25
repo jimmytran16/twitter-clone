@@ -102,3 +102,23 @@
     
 }
 
+
+
+/* DELETE MODAL */
+.delete-modal {
+    top:20%!important;
+}
+.delete-modal .modal-dialog  {
+    max-width: 350px!important;
+    text-align: center;
+}
+
+.delete-modal-content-container {
+    padding:20px 10px;
+}
+
+@media screen and (max-width:768px) {
+    .modal-dialog  {
+        max-width: 400px!important;
+    }
+}

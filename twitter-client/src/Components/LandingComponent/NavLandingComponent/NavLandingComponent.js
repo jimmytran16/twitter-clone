@@ -3,7 +3,8 @@ import './style.css'
 import { Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons'
-import RegisterForm from '../RegisterForm/RegisterForm'
+import RegisterForm from '../Modals/RegisterForm/RegisterForm'
+import LoginFormModal from '../Modals/LoginForm/LoginFormModal'
 
 
 /**
@@ -11,6 +12,7 @@ import RegisterForm from '../RegisterForm/RegisterForm'
 */
 function NavLandingComponent() {
     const [show, setShow] = useState(false);
+    const [showLogin,setShowLogin] = useState(false)
 
     return (
         <>
@@ -23,8 +25,9 @@ function NavLandingComponent() {
                     <p className="">Join Twitter today.</p>
                 </div>
                 <Button onClick={() => setShow(!show)} className="sign-up-nav-btn">Sign up</Button>
-                <Button className="login-nav-btn">Log in</Button>
+                <Button onClick={() => setShowLogin(!showLogin)} className="login-nav-btn">Log in</Button>
             </div>
+            <LoginFormModal show={showLogin} />
             <RegisterForm show={show}/>
         </>
 

@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 
 // function to post the tweet, and will return a callback
 const postTheTweet = (TWEET_INFO, cb) => {
-    post = new Post(TWEET_INFO)
+    let post = new Post(TWEET_INFO)
     // set the date for the post before saving it
     post['date'] = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
     post.save((err, data) => {
@@ -17,6 +17,12 @@ const postTheTweet = (TWEET_INFO, cb) => {
         else {
             cb(null, data)
         }
+    })
+}
+
+const deleteTweet = (TWEET_ID , cb) => {
+    Post.remove({_id: mongoose.Types.ObjectId(TWEET_ID)}, (err, result) => {
+        return err ? cb(err,null) : cb(null,result)
     })
 }
 
@@ -230,5 +236,6 @@ module.exports = {
     getUsersPost: getUsersPost,
     getAllPosts: getAllPosts,
     getUserThreadAndComments:getUserThreadAndComments,
-    getPostIdsOfUsersLikes:getPostIdsOfUsersLikes
+    getPostIdsOfUsersLikes:getPostIdsOfUsersLikes,
+    deleteTweet:deleteTweet
 }

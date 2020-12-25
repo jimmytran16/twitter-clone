@@ -4,6 +4,7 @@ import { Form, Button } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import Configs from '../../../Configs'
+import { saveUserDataToLocal } from '../../../Helpers/helpers'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 
@@ -43,9 +44,7 @@ function LoginForm() {
                     setIsLoading(true)
                     // go to the user's dashboard
                     if (response.data.success) {
-                        localStorage.setItem('user', JSON.stringify(response.data.data.user));
-                        localStorage.setItem("accessToken", response.data.data.accessToken);
-                        localStorage.setItem("refreshToken", response.data.data.refreshToken);
+                        saveUserDataToLocal(response.data.data)
                         console.log('inside local', JSON.parse(localStorage['user']))
                         history.push('/dashboard');
 
@@ -54,11 +53,6 @@ function LoginForm() {
                     }
                 })
                 .catch(err => console.error(err))
-            let data = {
-                username: username,
-                password: password
-            }
-            console.log(data);
         }, 2000)
     }
 
@@ -82,7 +76,7 @@ function LoginForm() {
             <Button type="submit" className="mb-2 login-btn">
                 {loginButtonVal}
                 <span className="loading-span" hidden={isLoading}>            
-                    <CircularProgress color="blue" size={15} thickness={6} />
+                    <CircularProgress color="inherit" size={15} thickness={6} />
                 </span>
             </Button>
             {

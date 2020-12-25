@@ -1,7 +1,8 @@
+const { json } = require('express')
 const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
-const { postTheTweet, updatePostInteraction, getUsersPost, getAllPosts, getUserThreadAndComments, getPostIdsOfUsersLikes } = require('./Actions')
+const { postTheTweet, updatePostInteraction, getUsersPost, getAllPosts, getUserThreadAndComments, getPostIdsOfUsersLikes, deleteTweet } = require('./Actions')
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 
@@ -105,6 +106,23 @@ router.get('/thread/:id' , (req,res) => {
         }else {
             res.json({
                 message:data,
+                success:true
+            })
+        }
+    })
+})
+
+// endpoint to delete the tweet of user
+router.delete('/delete-tweet', authenticateUser, (req,res) => {
+    deleteTweet(req.body.id , (err, message) => {
+        if (err) {
+            res.json({
+                message:message,
+                success:false
+            })
+        }else {
+            res.json({
+                message:message,
                 success:true
             })
         }

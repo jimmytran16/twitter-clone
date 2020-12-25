@@ -3,7 +3,7 @@ import './style.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faBell, faUser, faCog } from '@fortawesome/free-solid-svg-icons'
 import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons'
-import logoutUser from '../../Helpers/helpers'
+import { clearLocalStorageData } from '../../Helpers/helpers'
 import { Nav, Dropdown } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
@@ -17,7 +17,7 @@ export default function UserNavigationComponent() {
                 </Nav.Link>
               </Nav.Item>
               <Nav.Item>
-                <Nav.Link style={linkStyle} as={Link} >
+                <Nav.Link style={linkStyle} as={Link} to="/" >
                   <FontAwesomeIcon icon={faBell} /> Notifications
                 </Nav.Link>
               </Nav.Item>
@@ -32,7 +32,7 @@ export default function UserNavigationComponent() {
                   <FontAwesomeIcon icon={faCog} />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item onClick={logoutUser}>Logout</Dropdown.Item>
+                  <Dropdown.Item onClick={clearLocalStorageData}>Logout</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
                 <FontAwesomeIcon style={{ float: 'right' }} color="rgb(8, 160, 233)" size="2x" icon={faTwitterSquare} />

@@ -10,6 +10,8 @@ export default function TweetsComponent() {
     const [userPost, setUsersPost] = useState([])
     const [hideLoading, setHideLoading] = useState(true)
     const [userData,setUserData] = useState([])
+    const [refresh, setRefresh] = useState(false);
+
     
     const history = useHistory()
 
@@ -37,7 +39,7 @@ export default function TweetsComponent() {
                 .catch(err => console.error(err));
         }, 500)
 
-    }, [])
+    }, [refresh])
 
     // JSX that represents content of when user has no tweets yet
     const noTweetYetContent = (
@@ -63,7 +65,7 @@ export default function TweetsComponent() {
                     )
                     : userPost.map((post, index) => {
                         return (
-                            <PostComponent key={index} tweet={post.tweet} post={post} profile={true} />
+                            <PostComponent setRefresh={setRefresh} refresh={refresh} key={index} tweet={post.tweet} post={post} profile={true} />
                         )
                     })
             }

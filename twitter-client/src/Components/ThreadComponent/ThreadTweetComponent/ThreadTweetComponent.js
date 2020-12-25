@@ -26,7 +26,7 @@ export default function ThreadTweetComponent(props) {
                     .then(response => {
                         if (response.data.success) {
                             setPostDetail(response.data.message.post)
-                            setThreadComments(response.data.message.comments.comments)
+                            setThreadComments(response.data.message.comments ? response.data.message.comments.comments : [])
                             setHideLoading(true)
                             console.log(response.data.message.comments)
                         }

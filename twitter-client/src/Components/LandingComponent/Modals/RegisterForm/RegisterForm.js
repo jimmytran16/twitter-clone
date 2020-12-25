@@ -4,7 +4,7 @@ import { Modal, Form, Button, Col } from 'react-bootstrap'
 import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import Configs from '../../../Configs'
+import Configs from '../../../../Configs'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 

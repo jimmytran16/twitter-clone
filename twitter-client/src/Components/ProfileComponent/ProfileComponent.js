@@ -38,6 +38,7 @@ function ProfileComponent() {
     const [likesBtnStyling, setLikesBtnStyling] = useState(navLinkDefaultStyling)
     const [userData, setUserData] = useState({})
 
+
     const history = useHistory()
 
     useEffect(() => {
@@ -93,7 +94,7 @@ function ProfileComponent() {
                 <Card className="text-center">
                     <Card.Body style={cardBodyStyleHeader}>
                     </Card.Body>
-                    <Card.Body>
+                    <Card.Body> 
                         <hr />
                         <Row>
                             <Col>
@@ -120,12 +121,12 @@ function ProfileComponent() {
                             <Nav.Item>
                                 <Nav.Link as={Link} to="/profile/tweets" onClick={handleLinkClicks} style={tweetsBtnStyling}>Tweets</Nav.Link>
                             </Nav.Item>
-                            <Nav.Item>
+                            {/* <Nav.Item>
                                 <Nav.Link onClick={handleLinkClicks} style={repliesBtnStyling} >Replies</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link onClick={handleLinkClicks} style={mediaBtnStyling} >Media</Nav.Link>
-                            </Nav.Item>
+                            </Nav.Item> */}
                             <Nav.Item>
                                 <Nav.Link as={Link} to="/profile/likes" onClick={handleLinkClicks} style={likesBtnStyling} >Likes</Nav.Link>
                             </Nav.Item>

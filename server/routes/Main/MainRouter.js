@@ -18,7 +18,8 @@ router.post('/signup', checkIfUsernameExists, async (req,res) => {
         phone: req.body.phone,
         password: hashed_password,
         birth: req.body.birthday,
-        username:req.body.username
+        username:req.body.username,
+        profileUrl:'avatar.png'
     })
     // save onto the database
     user.save((err,data) => {

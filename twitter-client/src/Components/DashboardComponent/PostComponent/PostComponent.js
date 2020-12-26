@@ -132,7 +132,7 @@ function PostComponent(props) {
                 <Row>
                     <Col xs={2} sm={2} md={2}>
                         <div>
-                            <img className="user-profile-tweet-image" src={avatarImage} alt="user-img" />
+                            <img className="user-profile-tweet-image" src={(props.profile) ? localStorage.getItem('profilePicLocation') : `https://firebasestorage.googleapis.com/v0/b/twitter-clone-a4e87.appspot.com/o/${props.post.profileUrl}?alt=media`} alt="user-img" />
                         </div>
                     </Col>
                     <Col xs={10} sm={10} md={10}>

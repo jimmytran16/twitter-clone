@@ -3,7 +3,7 @@ import './style.css'
 import TweetsComponent from './TweetsComponent/TweetsComponent'
 import LikesComponent from './LikesComponent/LikesComponent'
 import { Container, Nav, Card, Button, Row, Col } from 'react-bootstrap'
-import avatarImg from '../../avatar.png'
+import EditProfileModal from './EditProfileModal/EditProfileModal'
 import { useHistory, BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
 // Styles
@@ -36,7 +36,9 @@ function ProfileComponent() {
     const [repliesBtnStyling, setRepliesBtnStyling] = useState(navLinkDefaultStyling)
     const [mediaBtnStyling, setMediaBtnStyling] = useState(navLinkDefaultStyling)
     const [likesBtnStyling, setLikesBtnStyling] = useState(navLinkDefaultStyling)
+    const [profileUrl,setProfileUrl] = useState(localStorage.getItem('profilePicLocation'))
     const [userData, setUserData] = useState({})
+    const [showEdit,setShowEdit] = useState(false)
 
 
     const history = useHistory()
@@ -51,7 +53,8 @@ function ProfileComponent() {
         setTweetsBtnStyling(navLinkDefaultStyling);
         let USER_DATA = JSON.parse(localStorage['user']);
         setUserData(USER_DATA);
-    }, [])
+        console.log(showEdit)
+    }, [showEdit])
 
     // function to handle the clicks of the menus
     function handleLinkClicks(event) {
@@ -101,7 +104,7 @@ function ProfileComponent() {
                                 <Row>
                                     <Col md={12}>
                                         <div>
-                                            <img className="user-profile-avatar" src={avatarImg} />
+                                            <img className="user-profile-avatar" src={profileUrl} />
                                         </div>
                                     </Col>
                                     <Col md={12}>
@@ -114,7 +117,8 @@ function ProfileComponent() {
                                 </Row>
                             </Col>
                             <Col>
-                                <Button className="edit-profile-btn" variant="primary">Edit profile</Button>
+                                <Button onClick={() => setShowEdit(!showEdit)} className="edit-profile-btn" variant="primary">Edit profile</Button>
+                                <EditProfileModal show={showEdit} />
                             </Col>
                         </Row>
                         <Nav className="navigation-container" style={navStyling} justify variant="tabs" defaultActiveKey="/home">

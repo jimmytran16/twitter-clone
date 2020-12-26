@@ -1,6 +1,7 @@
 .user-profile-tweet-image { 
     border-radius: 50px;
     width: 100px;
+    height: 100px;
 }
 
 .blockquote {
@@ -91,6 +92,7 @@
 @media screen and (max-width:768px) {
     .user-profile-tweet-image { 
         width: 100%;
+        height:auto;
     }
     .svg-inline--fa {
         margin: 0px 2px;

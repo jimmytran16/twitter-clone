@@ -4,6 +4,9 @@ import ProfileComponent from './Components/ProfileComponent/ProfileComponent'
 import UserNavigationComponent from './Components/UserNavigationComponent/UserNavigationComponent'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// test upload component
+import upload from './upload'
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -27,6 +30,7 @@ function App() {
             <Dashboard />
           </Route>
           <Route path="/thread/:id" component={ThreadComponent}/>
+          <Route path="/upload" component={upload} />
           <Route path="/" component={LandingComponent} />
         </Switch>
       </Router>

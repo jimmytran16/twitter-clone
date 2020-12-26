@@ -6,6 +6,7 @@ var postSchema = new mongoose.Schema({
     name: { type:String, required:true },
     tweet : { type:String, required:true },
     date : { type:String, required:true },
+    // profileUrl: { type:String, required:true },
     retweets : { type:Number, required:false, default:0 },
     likes : { type:Number, required:false, default:0 },
     comments : { type:Number, required:false, default:0 }

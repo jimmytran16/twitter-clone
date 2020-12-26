@@ -1,4 +1,5 @@
 const Post = require('../../model/postSchema')
+const User = require('../../model/userSchema')
 const Comment = require('../../model/commentSchema')
 const Likes = require('../../model/likesSchema')
 const { post } = require('./UserActionRouter')
@@ -20,9 +21,9 @@ const postTheTweet = (TWEET_INFO, cb) => {
     })
 }
 
-const deleteTweet = (TWEET_ID , cb) => {
-    Post.remove({_id: mongoose.Types.ObjectId(TWEET_ID)}, (err, result) => {
-        return err ? cb(err,null) : cb(null,result)
+const deleteTweet = (TWEET_ID, cb) => {
+    Post.remove({ _id: mongoose.Types.ObjectId(TWEET_ID) }, (err, result) => {
+        return err ? cb(err, null) : cb(null, result)
     })
 }
 
@@ -30,7 +31,7 @@ const deleteTweet = (TWEET_ID , cb) => {
 const updatePostInteraction = (REQUEST_BODY, cb) => {
     // check if the the body's data contains all data
     if (!REQUEST_BODY || !REQUEST_BODY.action || !REQUEST_BODY.id) {
-       return cb('id and action required in request body!', null);
+        return cb('id and action required in request body!', null);
     }
 
     var COMMENT_BODY;
@@ -64,16 +65,16 @@ const updatePostInteraction = (REQUEST_BODY, cb) => {
     // check if the action is LIKES
     if (REQUEST_BODY.action === 'LIKES') {
         // check if the user already liked the post!
-        checkIfUserLikedPostAlready(REQUEST_BODY.userId, REQUEST_BODY.id , (err,result) => {
+        checkIfUserLikedPostAlready(REQUEST_BODY.userId, REQUEST_BODY.id, (err, result) => {
             if (err) {
-                return cb(err,null);
+                return cb(err, null);
             }
             if (result) {
                 return cb(null, 'Already exist!');
-            }else {
+            } else {
                 Post.findOneAndUpdate({ _id: POST_ID }, INTERACTION_TYPE, (err, response) => {
-                    updateUserLikes(REQUEST_BODY.userId,REQUEST_BODY.id, (err,result) => {
-                        if(err) return cb(null,'likes not updated for user!');
+                    updateUserLikes(REQUEST_BODY.userId, REQUEST_BODY.id, (err, result) => {
+                        if (err) return cb(null, 'likes not updated for user!');
                         return cb(null, 'Sucessfully updated likes for user!')
                     })
                 })
@@ -90,40 +91,56 @@ const updatePostInteraction = (REQUEST_BODY, cb) => {
             else {
                 if (REQUEST_BODY.action === 'COMMENT') {
                     // save the commment onto the database
-                    if (!addCommentToPost(COMMENT_BODY,POST_ID,REQUEST_BODY.replyTo)) {
-                        return cb(null,'comment not saved successfully!')
+                    if (!addCommentToPost(COMMENT_BODY, POST_ID, REQUEST_BODY.replyTo)) {
+                        return cb(null, 'comment not saved successfully!')
                     }
                 }
                 return cb(null, 'successfully updated!');
             }
         })
     }
-    
+
 }
 
 // function to get all of the posts of that user and returns a callback
 const getUsersPost = (USER_ID, cb) => {
     Post.find({ userid: USER_ID }, (err, posts) => {
-        return err ? cb(err,null) : cb(null,posts)
+        return err ? cb(err, null) : cb(null, posts)
     })
 }
 
 // function to get all posts of all users and return a callbacl
 const getAllPosts = (cb) => {
-    Post.find({}, (err, posts) => { 
-        return err ? cb(err,null) : cb(null,posts)
+    Post.find({}).lean().exec((err, posts) => { // return posts in native JS objects 
+        User.find({})
+            .select('_id profileUrl')
+            .lean()
+            .exec(function (err, order) {
+                let users = {}
+                // populate the user object with the id : profileUrl
+                for (var i = 0; i < order.length; i++) {
+                    users[order[i]._id.toString()] = order[i].profileUrl
+                }
+                // loop through the posts and map the profileUrls to its respective posts
+                for (var x = 0; x < posts.length; x++) {
+                    posts[x].profileUrl = users[posts[x].userid]
+                }
+
+                return err ? cb(err, null) : cb(null, posts)
+            });
     })
 }
 
-function checkIfUserLikedPostAlready(userId,postId,callb) {
+
+function checkIfUserLikedPostAlready(userId, postId, callb) {
     // get all the likes from the user
-    Likes.findOne({userId:userId}, (err,likes) => {
-        if (err) return callb(err,null);
-        if (!likes) return callb(null,false);
+    Likes.findOne({ userId: userId }, (err, likes) => {
+        if (err) return callb(err, null);
+        if (!likes) return callb(null, false);
         if (likes.likes.includes(postId)) {
-            return callb(null,true);
-        }else {
-            return callb(null,false);
+            return callb(null, true);
+        } else {
+            return callb(null, false);
         }
     })
 }
@@ -136,23 +153,23 @@ function checkIfUserLikedPostAlready(userId,postId,callb) {
 function addCommentToPost(COMMENT, postId, replyToUser) {
     console.log(COMMENT)
     // check to see if the user post exist in comment collection
-    Comment.findOne({postId:postId} , (err,post) => {
+    Comment.findOne({ postId: postId }, (err, post) => {
         if (err) {
             console.log(err)
             return false;
         }
         if (!post) { // create the new comment schema, and update the post
             let NEW_COMMENT = new Comment({
-                postId:postId,
-                comments:[COMMENT],
-                replyTo:replyToUser
+                postId: postId,
+                comments: [COMMENT],
+                replyTo: replyToUser
             })
-            NEW_COMMENT.save((err,data) => {
+            NEW_COMMENT.save((err, data) => {
                 return err ? false : true;
             })
-        }else { // update the existing post, pushing the reply to the comments array
-            Comment.updateOne({postId:postId},{$push:{comments:COMMENT}}, (err,success) =>{
-               return err ? false : true;
+        } else { // update the existing post, pushing the reply to the comments array
+            Comment.updateOne({ postId: postId }, { $push: { comments: COMMENT } }, (err, success) => {
+                return err ? false : true;
             })
         }
     })
@@ -168,21 +185,21 @@ function addCommentToPost(COMMENT, postId, replyToUser) {
 function updateUserLikes(userId, postId, cb) {
     console.log(userId, postId)
     // check to see if the user post exist in comment collection
-    Likes.findOne({userId:userId} , (err,like) => {
+    Likes.findOne({ userId: userId }, (err, like) => {
         if (err) {
-            return cb(err,null);
+            return cb(err, null);
         }
         if (!like) { // create the new comment schema, and update the likes
             let NEW_LIKES = new Likes({
-                userId:userId,
+                userId: userId,
                 likes: [postId]
             })
-            NEW_LIKES.save((err,data) => {
-                return err ? cb(err,null) : cb(null,true)
+            NEW_LIKES.save((err, data) => {
+                return err ? cb(err, null) : cb(null, true)
             })
-        }else { // update the existing post, pushing the new post to the user's likes array
-            Likes.updateOne({userId:userId},{$push:{likes:postId}}, (err,success) =>{
-                 return err ? cb(err,null) : cb(null,success)
+        } else { // update the existing post, pushing the new post to the user's likes array
+            Likes.updateOne({ userId: userId }, { $push: { likes: postId } }, (err, success) => {
+                return err ? cb(err, null) : cb(null, success)
             })
         }
     })
@@ -192,10 +209,10 @@ function updateUserLikes(userId, postId, cb) {
 function getUserThreadAndComments(postId, cb) {
     let thread = {}
     // query to get the specfic post
-    Post.findOne({_id:postId} , (err,post) => {
+    Post.findOne({ _id: postId }, (err, post) => {
         thread['post'] = post
         if (err) return cb('Error retrieving post', null);
-        Comment.findOne({postId:postId} , (err,data) => {
+        Comment.findOne({ postId: postId }, (err, data) => {
             thread['comments'] = data
             return err ? cb('Error retrieving comments', null) : cb(null, thread)
         })
@@ -205,17 +222,33 @@ function getUserThreadAndComments(postId, cb) {
 // function to get all of the user's liked post ids
 function getPostIdsOfUsersLikes(userId, cb) {
     // get all the likes from the user
-    Likes.findOne({userId:userId}, (err,likes) => {
+    Likes.findOne({ userId: userId }, (err, likes) => {
         console.log(likes)
-        if (err) return cb(err,null);
-        if (!likes) return cb(null,[]);
+        if (err) return cb(err, null);
+        if (!likes) return cb(null, []);
         else {
             let likes_arr = convertToMongooseObjectIdsArray(likes.likes)
-            
-            Post.find({_id:{$in:likes_arr}}, (err,posts) => {
-                if (err) return cb(err,null);
+            // get all the posts based on the post ids, that is liked by the user
+            Post.find({ _id: { $in: likes_arr } }).lean().exec((err, posts) => {
+                if (err) return cb(err, null);
                 else {
-                    return cb(null,posts)
+                    // GET all the users with its respective ids and profileUrls so we can include it inside the post objects
+                    User.find({})
+                        .select('_id profileUrl')
+                        .lean()
+                        .exec(function (err, order) {
+                            let users = {}
+                            // populate the user object with the id : profileUrl
+                            for (var i = 0; i < order.length; i++) {
+                                users[order[i]._id.toString()] = order[i].profileUrl
+                            }
+                            // loop through the posts and map the profileUrls to its respective posts
+                            for (var x = 0; x < posts.length; x++) {
+                                posts[x].profileUrl = users[posts[x].userid]
+                            }
+
+                            return err ? cb(err, null) : cb(null, posts)
+                        });
                 }
             })
         }
@@ -224,7 +257,7 @@ function getPostIdsOfUsersLikes(userId, cb) {
 
 // convert the array of strings to mongoose object ID types
 function convertToMongooseObjectIdsArray(string_arrs) {
-    for(var index in string_arrs) {
+    for (var index in string_arrs) {
         string_arrs[index] = mongoose.Types.ObjectId(string_arrs[index])
     }
     return string_arrs;
@@ -235,7 +268,7 @@ module.exports = {
     updatePostInteraction: updatePostInteraction,
     getUsersPost: getUsersPost,
     getAllPosts: getAllPosts,
-    getUserThreadAndComments:getUserThreadAndComments,
-    getPostIdsOfUsersLikes:getPostIdsOfUsersLikes,
-    deleteTweet:deleteTweet
+    getUserThreadAndComments: getUserThreadAndComments,
+    getPostIdsOfUsersLikes: getPostIdsOfUsersLikes,
+    deleteTweet: deleteTweet
 }

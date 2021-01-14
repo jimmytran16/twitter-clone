@@ -10,8 +10,6 @@ import axios from 'axios'
 
 export default function EditProfileModal(props) {
     const [show, setShow] = useState(props.show);
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
     const [hideLoading, setHideLoading] = useState(true);
     const [message, setMessage] = useState(null)
     const [selected, setSelected] = useState(null);
@@ -22,21 +20,21 @@ export default function EditProfileModal(props) {
 
     const handleUpload = () => {
         if (selected !== null) {
-            console.log(selected);
+            setHideLoading(false)
             const data = new FormData()
             data.set('file', selected, `${Date.now()}-${selected.name}`);
             data.append('userId', JSON.parse(localStorage.getItem('user'))._id);
-            setHideLoading(false)
             setTimeout(() => {
                 axios({
-                    url: `${Config.SERVER_URL}/upload`,
+                    url: `${Config.SERVER_URL}/home/upload`,
                     method: 'post',
                     data: data,
                     headers: { 'Content-Type': 'multipart/form-data' }
                 })
                     .then(response => {
+                        console.log(response.data)
                         // save new profile picture to the local storage
-                        saveNewProfilePicture(response.data.fileName)
+                        saveNewProfilePicture(response.data.message.savedData.fileName)
                         setMessage('Sucessfully uploaded picture!')
                         setHideLoading(true)
                         setShow(false)
@@ -46,7 +44,7 @@ export default function EditProfileModal(props) {
                         setHideLoading(true)
                         setMessage('Error uploading!')
                     });
-            },500)
+            }, 500)
         }
     }
 

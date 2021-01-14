@@ -2,8 +2,11 @@ const Post = require('../../model/postSchema')
 const User = require('../../model/userSchema')
 const Comment = require('../../model/commentSchema')
 const Likes = require('../../model/likesSchema')
-const { post } = require('./UserActionRouter')
 const mongoose = require('mongoose')
+const { Storage } = require('@google-cloud/storage');
+const bcrypt = require('bcrypt')
+
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 // function to post the tweet, and will return a callback
 const postTheTweet = (TWEET_INFO, cb) => {
@@ -26,8 +29,11 @@ const deleteTweet = (TWEET_ID, cb) => {
         return err ? cb(err, null) : cb(null, result)
     })
 }
-
-// function will try to update the post's interaction and send back a callback
+/**
+ * function will try to update the post's interaction and send back a callback
+ * @param {Object} REQUEST_BODY - the request body object containing data from webapage
+ * @param {Function} cb - a callback function 
+ */
 const updatePostInteraction = (REQUEST_BODY, cb) => {
     // check if the the body's data contains all data
     if (!REQUEST_BODY || !REQUEST_BODY.action || !REQUEST_BODY.id) {
@@ -113,7 +119,7 @@ const getUsersPost = (USER_ID, cb) => {
 const getAllPosts = (cb) => {
     Post.find({}).lean().exec((err, posts) => { // return posts in native JS objects 
         User.find({})
-            .select('_id profileUrl')
+            .select('_id profileUrl') // retrieve ONLY the profileUrl and the _id
             .lean()
             .exec(function (err, order) {
                 let users = {}
@@ -137,10 +143,27 @@ function checkIfUserLikedPostAlready(userId, postId, callb) {
     Likes.findOne({ userId: userId }, (err, likes) => {
         if (err) return callb(err, null);
         if (!likes) return callb(null, false);
+        // if the user liked the post then we will unlike it
         if (likes.likes.includes(postId)) {
+            unlikeThePost(userId, postId)
             return callb(null, true);
         } else {
             return callb(null, false);
+        }
+    })
+}
+
+function unlikeThePost(userId, postId) {
+    Post.findOneAndUpdate({ _id: mongoose.Types.ObjectId(postId) }, { $inc: { likes: -1 } }, (err, result) => {
+        if (err) { console.log('erroring out the on unlikeing the tweet') }
+        else {
+            // query the likes document of that user and remove the post id that the user liked from the arr
+            Likes.updateOne({ userId: userId }, { $pullAll: { likes: [postId] } }, (err, result) => {
+                if (err) { console.log(err) }
+                else {
+                    console.log('successfully removed the postId from the array')
+                }
+            })
         }
     })
 }
@@ -175,7 +198,6 @@ function addCommentToPost(COMMENT, postId, replyToUser) {
     })
 }
 
-// function to add the new likes to the collection for that user
 /**
  * This function will update the user's likes
  * @param {String} postId - the ID of a specfic post
@@ -218,8 +240,11 @@ function getUserThreadAndComments(postId, cb) {
         })
     })
 }
-
-// function to get all of the user's liked post ids
+/**
+ * Get all of the User likes and the corresponding profileUrls of those liked posts
+ * @param {String} userId - the ID of a specfic user
+ * @param {Function} cb - a callback function 
+ */
 function getPostIdsOfUsersLikes(userId, cb) {
     // get all the likes from the user
     Likes.findOne({ userId: userId }, (err, likes) => {
@@ -255,6 +280,27 @@ function getPostIdsOfUsersLikes(userId, cb) {
     })
 }
 
+async function editSettings (REQ_BODY, cb) {
+    let userId = REQ_BODY.userId;
+    let newName = REQ_BODY.newName;
+    let newPassword = await bcrypt.hash(REQ_BODY.newPassword, parseInt(process.env.HASH_ITERATION));
+    let newPhoneNumber = REQ_BODY.newPhoneNumber;
+
+    let modifiedBody = {
+        name: newName,
+        password:newPassword,
+        phone:newPhoneNumber,
+    }
+
+    console.log(modifiedBody)
+    User.findOneAndUpdate({_id: mongoose.Types.ObjectId(userId) }, modifiedBody , (err,result) =>{
+        if (err) { return cb(err,null) }
+        else {
+            return cb(null, result)
+        }
+    })
+}
+
 // convert the array of strings to mongoose object ID types
 function convertToMongooseObjectIdsArray(string_arrs) {
     for (var index in string_arrs) {
@@ -263,6 +309,71 @@ function convertToMongooseObjectIdsArray(string_arrs) {
     return string_arrs;
 }
 
+/**
+ * Firebase Configurations
+ */
+// Create new storage instance with Firebase project credentials
+const storage = new Storage({
+    projectId: process.env.GCLOUD_PROJECT_ID,
+    keyFilename: process.env.GCLOUD_APPLICATION_CREDENTIALS,
+});
+
+// Create a bucket associated to Firebase storage bucket
+const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET_URL);
+
+/**
+ * function to upload the user profile picture to firebase, and update user's profileUrl
+ * @param {Object} REQ_BODY - the body object containing the request's body
+ * @param {Object} REQ_FILE - the file object containing the files data 
+ * @param {Function} cb - a callback function 
+ */
+function uploadUserProfilePicture(REQ_BODY, REQ_FILE, cb) {
+    try {
+        console.log(REQ_BODY.userId)
+        if (!REQ_FILE) {
+            res.status(400).send('Error, could not upload file');
+            cb('Error, could not upload file', null)
+            return;
+        }
+        else {
+            // get the user id
+            let userId = REQ_BODY.userId
+
+            // Create new blob in the bucket referencing the file
+            const blob = bucket.file(REQ_FILE.originalname);
+
+            User.findOneAndUpdate({ _id: mongoose.Types.ObjectId(userId) }, { profileUrl: encodeURI(blob.name) }, (err, result) => {
+                if (err) { cb(err, null) }
+                // Create writable stream and specifying file mimetype
+                else {
+                    const blobWriter = blob.createWriteStream({
+                        metadata: {
+                            contentType: REQ_FILE.mimetype,
+                        },
+                    });
+
+                    blobWriter.on('error', (err) => { return cb(err, null) });
+
+                    blobWriter.on('finish', () => {
+                        // Assembling public URL for accessing the file via HTTP
+                        const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name
+                            }/o/${encodeURI(blob.name)}?alt=media`;
+                        cb(null, {message:'Sucessfully uploaded profile picture!',savedData:{ fileName: REQ_FILE.originalname, fileLocation: publicUrl }})
+                    });
+                    // When there is no more data to be consumed from the stream
+                    blobWriter.end(REQ_FILE.buffer);
+                }
+            })
+        }
+
+    } catch (error) {
+        console.log('err', error)
+        cb(`Error, could not upload file: ${error}`, null)
+        return;
+    }
+}
+
+
 module.exports = {
     postTheTweet: postTheTweet,
     updatePostInteraction: updatePostInteraction,
@@ -270,5 +381,7 @@ module.exports = {
     getAllPosts: getAllPosts,
     getUserThreadAndComments: getUserThreadAndComments,
     getPostIdsOfUsersLikes: getPostIdsOfUsersLikes,
-    deleteTweet: deleteTweet
+    deleteTweet: deleteTweet,
+    uploadUserProfilePicture: uploadUserProfilePicture,
+    editSettings:editSettings
 }

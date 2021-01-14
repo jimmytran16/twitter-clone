@@ -89,10 +89,15 @@
     background-color: #dedede66;
 }
 
+.post-img-col {
+    display: flex;
+    align-items: center;
+}
+
 @media screen and (max-width:768px) {
     .user-profile-tweet-image { 
-        width: 100%;
-        height:auto;
+        width: 12vw;
+        height:12vw;
     }
     .svg-inline--fa {
         margin: 0px 2px;
@@ -106,6 +111,8 @@
 
 
 
+
+
 /* DELETE MODAL */
 .delete-modal {
     top:20%!important;
@@ -113,6 +120,7 @@
 .delete-modal .modal-dialog  {
     max-width: 350px!important;
     text-align: center;
+    margin: 0 auto;
 }
 
 .delete-modal-content-container {

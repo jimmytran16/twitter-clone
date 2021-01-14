@@ -40,11 +40,7 @@ function PostComponent(props) {
     // func to handle the interactions (COMMENT,RETWEET,LIKES,LINK OFFS)
     const handleInteraction = (e) => {
         e.preventDefault()
-
-        // if this is retweeting from the profile page, then don't do anything
-        if (props.profile) {
-            return;
-        }
+        
         // call the endpoint to update the post's interaction
         axios({
             method: 'post',
@@ -57,8 +53,6 @@ function PostComponent(props) {
             },
         })
             .then(response => {
-                console.log(response.data)
-
                 if (!response.data.success && response.data.msg === 'Unauthorized!') clearLocalStorageData()
                 props.setRefresh(!props.refresh)
             })
@@ -87,7 +81,6 @@ function PostComponent(props) {
         .then(response => {
             if(response.data.success) {
                 props.setRefresh(!props.refresh)
-                console.log(response.data)
                 setShow(false)
             }
         })
@@ -127,10 +120,10 @@ function PostComponent(props) {
     return (
         <Card className="post-component-card-container" style={{ borderRadius: 'unset' }}>
             {(deleteModal)}
-            <CommentComponent post={props.post} show={showCommentForm} />
+            <CommentComponent post={props.post} show={showCommentForm} profile={(props.profile) ? true: false} />
             <Card.Body>
                 <Row>
-                    <Col xs={2} sm={2} md={2}>
+                    <Col className="post-img-col" xs={2} sm={2} md={2}>
                         <div>
                             <img className="user-profile-tweet-image" src={(props.profile) ? localStorage.getItem('profilePicLocation') : `https://firebasestorage.googleapis.com/v0/b/twitter-clone-a4e87.appspot.com/o/${props.post.profileUrl}?alt=media`} alt="user-img" />
                         </div>

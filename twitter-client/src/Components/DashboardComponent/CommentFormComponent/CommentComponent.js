@@ -9,9 +9,6 @@ import Configs from '../../../Configs'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 
-import { faGripLinesVertical } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 
 export default function CommentComponent(props) {
     const [show, setShow] = useState(props.show)
@@ -77,7 +74,7 @@ export default function CommentComponent(props) {
                     <div className="comment-info-container">
                         <div style={{ display: 'flex' }}>
                             <div>
-                                <img style={{display:'block'}} className="commenter-profile-pic" src={avatarImage} height="40px" width="40px" />
+                                <img style={{display:'block'}} className="commenter-profile-pic" src={(props.profile) ? localStorage.getItem('profilePicLocation') :`https://firebasestorage.googleapis.com/v0/b/twitter-clone-a4e87.appspot.com/o/${props.post.profileUrl}?alt=media`} height="40px" width="40px" />
                                 <img  src={verticalImage} height="40px" width="40px" />
                             </div>
                             <div style={{margin:'0px 12px'}}>
@@ -88,7 +85,7 @@ export default function CommentComponent(props) {
                     </div>
 
                     <div className="comment-reply-container">
-                        <img className="commenter-profile-pic" src={avatarImage} height="40px" width="40px" />
+                        <img className="commenter-profile-pic" src={localStorage.getItem('profilePicLocation')} height="40px" width="40px" />
                         <Form.Control value={reply} className="comment-text-area" onChange={updateReplyHandler} style={{ border: 'unset' }} as="textarea" rows={3} placeholder="Tweet your reply" ></Form.Control>
                     </div>
                     <div className="reply-button-container">

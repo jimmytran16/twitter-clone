@@ -10,10 +10,6 @@
     margin: 10px;
 }
 
-.welcome-user-container button, .welcome-user-container p {
-    display: inline;
-    margin-left: 10px;
-}
 /* .post-icons-container .fComment:hover{
     background-color:#08a0e9!important;
     border-radius: 25px;

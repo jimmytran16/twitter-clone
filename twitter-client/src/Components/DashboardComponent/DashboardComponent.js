@@ -18,7 +18,7 @@ function DashboardComponent() {
     const [refresh, setRefresh] = useState(false);
     const [userData, setUserData] = useState({})
     const [hideLoading,setHideLoading] = useState(false)
-    const [loadTime,setLoadTime] = useState(800)
+    const [loadTime,setLoadTime] = useState(600)
     const [disableTweetBtn, setDisableTweetBtn] = useState(true)
 
     const history = useHistory()
@@ -43,7 +43,6 @@ function DashboardComponent() {
                 }
             })
                 .then(response => {
-                    console.log(response.data.data)
                     setHideLoading(true)
                     setLoadTime(0)
                     if (response.data.success) {
@@ -74,7 +73,6 @@ function DashboardComponent() {
             }
         })
             .then(response => {
-                console.log(response.data)
                 // if they are unauthorized, then we will force a log out
                 if (!response.data.success && response.data.msg === 'Unauthorized!') clearLocalStorageData()
                 clearTweetFields()
@@ -89,18 +87,17 @@ function DashboardComponent() {
         setDisableTweetBtn( (e.target.value === '') ? true : false)
     }
 
-    // function to clear the text area field 
+    // function to clear the text area field , and the state of the tweet, and disable the button
     const clearTweetFields = () => {
         document.getElementsByClassName('tweet-text-area')[0].value = ''
+        setDisableTweetBtn(true)
+        setTweet("")
     }
 
     return (
         <>
             <Container className="dashboard-container">
-                <div className="welcome-user-container">
-                    <p>Welcome, {userData.name}</p>
-                </div>
-                <Card style={{ marginBottom: '10px', borderRadius: 'unset' }}>
+                <Card style={{ marginBottom: '10px', borderRadius: 'unset', marginTop:'10px' }}>
                     <Card.Body>
                         <Form.Group controlId="exampleForm.ControlTextarea1">
                             <Form.Control className="tweet-text-area" onChange={updateTweetInput} style={{ border: 'unset' }} as="textarea" rows={3} placeholder="What's happening?" ></Form.Control>

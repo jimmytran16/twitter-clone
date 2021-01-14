@@ -9,7 +9,7 @@ import Config from '../../../Configs'
 export default function TweetsComponent() {
     const [userPost, setUsersPost] = useState([])
     const [hideLoading, setHideLoading] = useState(true)
-    const [userData,setUserData] = useState([])
+    // const [userData,setUserData] = useState([])
     const [refresh, setRefresh] = useState(false);
 
     
@@ -22,7 +22,7 @@ export default function TweetsComponent() {
             return;
         }
         let USER_DATA = JSON.parse(localStorage['user']);
-        setUserData(USER_DATA);
+        // setUserData(USER_DATA);
         setHideLoading(false)
         setTimeout(() => {
             // call api to get all of the posts of that user

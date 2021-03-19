@@ -8,11 +8,6 @@ const UserActionRouter = require('./routes/User/UserActionRouter')
 const UserAuthLogin = require('./routes/Auth/LoginRouter')
 const morgan = require('morgan')
 
-//test 
-const multer = require('multer')
-const { Storage } = require('@google-cloud/storage');
-const User = require('./model/userSchema')
-
 // configure the development .env file
 if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 // connect to the database
@@ -26,12 +21,12 @@ app.use(cors({
   credentials: true
 }))
 app.use(morgan('dev'))
-app.use((req, res, next) => {
-  if (req.method === 'POST') {
-    console.log(req.body)
-  }
-  next()
-})
+// app.use((req, res, next) => {
+//   if (req.method === 'POST') {
+//     console.log(req.body)
+//   }
+//   next()
+// })
 
 // routers
 app.use('/', MainRouter);

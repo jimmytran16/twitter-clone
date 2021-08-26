@@ -1,7 +1,7 @@
-const Post = require('../../model/postSchema')
-const User = require('../../model/userSchema')
-const Comment = require('../../model/commentSchema')
-const Likes = require('../../model/likesSchema')
+const Post = require('../model/postSchema')
+const User = require('../model/userSchema')
+const Comment = require('../model/commentSchema')
+const Likes = require('../model/likesSchema')
 const mongoose = require('mongoose')
 const { Storage } = require('@google-cloud/storage');
 const bcrypt = require('bcrypt')

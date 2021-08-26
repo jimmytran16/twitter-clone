@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const tokensModel = require('../../model/tokenSchema')
+const Token = require('../model/tokenSchema')
 
 require('dotenv').config();
 
@@ -18,7 +18,7 @@ const refreshTheToken = (refresh) => {
     // verify if the refresh token is existing inside the refreshToken arr (will be in database in production)
 
     // verify to see if the token exists inside the database
-    tokensModel.find({ token:refresh }, (err,data) => {
+    Token.find({ token:refresh }, (err,data) => {
         console.log('inside of the function()'  + refresh);
         console.log(data);
         // check if there is an error

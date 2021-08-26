@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const User = require('../../model/userSchema');
+const User = require('../model/userSchema');
 const bcrypt = require('bcrypt');
 
 // main endpoint

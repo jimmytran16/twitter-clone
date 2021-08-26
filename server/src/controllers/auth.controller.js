@@ -1,14 +1,12 @@
-const router = require('express').Router();
-const User = require('../../model/userSchema');
-const bcrypt = require('bcrypt');
-const jwtMethods = require('./Jwt');
-const jwt = require('jsonwebtoken');
 
-router.post('/signin', (req, res) => {
+const bcrypt = require('bcrypt');
+const JwtUtil = require('../utils/jwt.util');
+const User = require('../model/userSchema');
+
+const signIn = (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
 
-    console.log(req.body)
     // query to look for the user by username
     User.findOne({ username: username }, (err, user) => {
         if (err) {
@@ -37,8 +35,8 @@ router.post('/signin', (req, res) => {
                 // create the data object 
                 let data = {
                     user: user,
-                    accessToken: jwtMethods.generateToken(user_object),
-                    refreshToken: jwtMethods.generateRefreshToken(user_object)
+                    accessToken: JwtUtil.generateToken(user_object),
+                    refreshToken: JwtUtil.generateRefreshToken(user_object)
                 }
                 return res.json({
                     message: 'User successfully logged in',
@@ -54,9 +52,9 @@ router.post('/signin', (req, res) => {
         });
 
     })
-})
+}
 
-router.post('/verify', (req,res) => {
+const verify = (req,res) => {
     // get the token from the headers
     let token = req.headers.authorization.split(' ')[1];
     // verify the token
@@ -74,7 +72,39 @@ router.post('/verify', (req,res) => {
             })
         }
     })
-})
+}
 
+const refreshToken = (req, res) => {
+    const refresh = req.body.refresh
+    if (!refresh) res.status(403).json({ message: 'No available' });
 
-module.exports = router;
+    // check if the refresh token exists 
+    if (!auth.refreshTheToken(refresh)) {
+        res.status(403).json({ message: 'invalid refresh token' });
+    }
+    else {
+        // verify the refresh if it does exist
+        jwt.verify(refresh, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+            // if err, then the token sent is not valid
+            if (err) {
+                res.sendStatus(403);
+                res.end();
+            }
+            // generate a new token if valid
+            else {
+                const newAccessToken = auth.generateToken({ name: user.name })
+                res.status(200).json({
+                    accessToken: newAccessToken,
+                    refreshToken: refresh
+                })
+
+            }
+        })
+    }
+}
+
+module.exports = {
+    signIn,
+    verify,
+    refreshToken
+}

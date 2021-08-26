@@ -3,9 +3,9 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
-const MainRouter = require('./routes/Main/MainRouter')
-const UserActionRouter = require('./routes/User/UserActionRouter')
-const UserAuthLogin = require('./routes/Auth/LoginRouter')
+const mainRouter = require('./src/routes/main.route')
+const authRouter = require('./src/routes/auth.route')
+const userRouter = require('./src/routes/user.route')
 const morgan = require('morgan')
 
 // configure the development .env file
@@ -21,17 +21,11 @@ app.use(cors({
   credentials: true
 }))
 app.use(morgan('dev'))
-// app.use((req, res, next) => {
-//   if (req.method === 'POST') {
-//     console.log(req.body)
-//   }
-//   next()
-// })
 
 // routers
-app.use('/', MainRouter);
-app.use('/home', UserActionRouter);
-app.use('/auth', UserAuthLogin);
+app.use('/', mainRouter);
+app.use('/home', userRouter);
+app.use('/auth', authRouter);
 
 // export the app
 module.exports = { app } 

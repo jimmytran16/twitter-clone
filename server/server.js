@@ -1,15 +1,16 @@
+// configure the development .env file
+if (process.env.NODE_ENV !== 'production') require('dotenv').config()
+
 // required modules
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const mongoose = require('mongoose')
-const MainRouter = require('./routes/Main/MainRouter')
-const UserActionRouter = require('./routes/User/UserActionRouter')
-const UserAuthLogin = require('./routes/Auth/LoginRouter')
 const morgan = require('morgan')
+const mongoose = require('mongoose')
+const mainRouter = require('./src/routes/main.route')
+const authRouter = require('./src/routes/auth.route')
+const userRouter = require('./src/routes/user.route')
 
-// configure the development .env file
-if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 // connect to the database
 mongoose.connect(process.env.DB_URL, { useUnifiedTopology: true, useNewUrlParser: true }, (err) => err ? console.log('error connecting to the db') : console.log('connected to db successfully')); // connect to the database
 
@@ -21,17 +22,11 @@ app.use(cors({
   credentials: true
 }))
 app.use(morgan('dev'))
-// app.use((req, res, next) => {
-//   if (req.method === 'POST') {
-//     console.log(req.body)
-//   }
-//   next()
-// })
 
 // routers
-app.use('/', MainRouter);
-app.use('/home', UserActionRouter);
-app.use('/auth', UserAuthLogin);
+app.use('/', mainRouter);
+app.use('/home', userRouter);
+app.use('/auth', authRouter);
 
 // export the app
 module.exports = { app } 
